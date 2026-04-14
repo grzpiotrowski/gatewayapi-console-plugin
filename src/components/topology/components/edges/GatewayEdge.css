@@ -1,0 +1,20 @@
+/* Gateway Edge Styles */
+
+.gatewayapi-console-plugin__edge .pf-topology__edge__link {
+  stroke: var(--pf-v6-global-palette--black-600);
+  stroke-width: 1.5px;
+  stroke-dasharray: 5, 5;
+}
+
+.gatewayapi-console-plugin__edge:hover .pf-topology__edge__link {
+  stroke: var(--pf-v6-global-palette--black-900);
+  stroke-width: 2px;
+}
+
+.gatewayapi-console-plugin__edge .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global-palette--black-600);
+}
+
+.gatewayapi-console-plugin__edge:hover .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global-palette--black-900);
+}

@@ -11,10 +11,62 @@
     "type": "console.navigation/href",
     "properties": {
       "id": "example",
-      "name": "%plugin__console-plugin-template~Plugin example%",
+      "name": "%plugin__gatewayapi-console-plugin~Plugin example%",
       "href": "/example",
       "perspective": "admin",
       "section": "home"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "gateway.networking.k8s.io",
+        "version": "v1",
+        "kind": "GatewayClass"
+      },
+      "plural": "gatewayclasses",
+      "abbr": "GC",
+      "namespaced": false,
+      "label": "%plugin__gatewayapi-console-plugin~GatewayClass%",
+      "labelPlural": "%plugin__gatewayapi-console-plugin~GatewayClasses%"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "gateway.networking.k8s.io",
+        "version": "v1",
+        "kind": "Gateway"
+      },
+      "plural": "gateways",
+      "abbr": "GW",
+      "namespaced": true,
+      "label": "%plugin__gatewayapi-console-plugin~Gateway%",
+      "labelPlural": "%plugin__gatewayapi-console-plugin~Gateways%"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": [
+        "/gateway-topology",
+        "/gateway-topology/ns/:ns"
+      ],
+      "component": { "$codeRef": "GatewayTopologyPage" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "gateway-topology",
+      "name": "%plugin__gatewayapi-console-plugin~Gateway API Topology%",
+      "href": "/gateway-topology",
+      "perspective": "admin",
+      "section": "networking",
+      "insertAfter": "routes"
     }
   }
 ]

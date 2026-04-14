@@ -1,0 +1,21 @@
+{
+  "Gateway API Topology": "Gateway API Topology",
+  "Loading topology": "Loading topology",
+  "Initializing topology view": "Initializing topology view",
+  "Error loading topology": "Error loading topology",
+  "An error occurred while loading the topology.": "An error occurred while loading the topology.",
+  "No Gateway API resources found": "No Gateway API resources found",
+  "No Gateway API resources were found in the {{namespace}} namespace.": "No Gateway API resources were found in the {{namespace}} namespace.",
+  "No Gateway API resources were found in any namespace.": "No Gateway API resources were found in any namespace.",
+  "Create a GatewayClass and Gateway to visualize your Gateway API configuration.": "Create a GatewayClass and Gateway to visualize your Gateway API configuration.",
+  "Namespace: {{namespace}}": "Namespace: {{namespace}}",
+  "GC": "GC",
+  "GW": "GW",
+  "{{count}} listener": "{{count}} listener",
+  "{{count}} listener_other": "{{count}} listeners",
+  "Plugin example": "Plugin example",
+  "GatewayClass": "GatewayClass",
+  "GatewayClasses": "GatewayClasses",
+  "Gateway": "Gateway",
+  "Gateways": "Gateways"
+}

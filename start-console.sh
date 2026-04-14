@@ -7,7 +7,12 @@ CONSOLE_PORT=${CONSOLE_PORT:=9000}
 CONSOLE_IMAGE_PLATFORM=${CONSOLE_IMAGE_PLATFORM:="linux/amd64"}
 
 # Plugin metadata is declared in package.json
-PLUGIN_NAME=${npm_package_consolePlugin_name}
+# Extract plugin name from package.json (compatible with Yarn 4)
+if [ -n "${npm_package_consolePlugin_name:-}" ]; then
+    PLUGIN_NAME=${npm_package_consolePlugin_name}
+else
+    PLUGIN_NAME=$(node -p "require('./package.json').consolePlugin.name")
+fi
 
 echo "Starting local OpenShift console..."
 

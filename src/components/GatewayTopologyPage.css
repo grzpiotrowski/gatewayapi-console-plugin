@@ -1,0 +1,20 @@
+/* Gateway API Topology Page Styles */
+
+.gatewayapi-console-plugin__topology-page {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.gatewayapi-console-plugin__topology-page .pf-topology-visualization-surface {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Ensure the topology surface fills the page section */
+.gatewayapi-console-plugin__topology-page > div {
+  height: 100%;
+}

@@ -1,0 +1,30 @@
+/* Gateway Node Styles */
+
+.gatewayapi-console-plugin__node--gateway .pf-topology__node__background {
+  fill: var(--pf-v6-global-palette--blue-100);
+  stroke: var(--pf-v6-global-palette--blue-500);
+  stroke-width: 2px;
+}
+
+.gatewayapi-console-plugin__node--gateway:hover .pf-topology__node__background {
+  fill: var(--pf-v6-global-palette--blue-200);
+  stroke: var(--pf-v6-global-palette--blue-600);
+}
+
+.gatewayapi-console-plugin__node--gateway.pf-m-selected .pf-topology__node__background {
+  stroke: var(--pf-v6-global-palette--blue-700);
+  stroke-width: 3px;
+}
+
+/* Status-based border colors */
+.gatewayapi-console-plugin__node--gateway[data-status="success"] .pf-topology__node__background {
+  stroke: var(--pf-v6-global-palette--green-500);
+}
+
+.gatewayapi-console-plugin__node--gateway[data-status="warning"] .pf-topology__node__background {
+  stroke: var(--pf-v6-global-palette--gold-500);
+}
+
+.gatewayapi-console-plugin__node--gateway[data-status="danger"] .pf-topology__node__background {
+  stroke: var(--pf-v6-global-palette--red-500);
+}
