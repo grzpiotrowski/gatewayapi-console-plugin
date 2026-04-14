@@ -1,0 +1,11 @@
+/* Service Node Styling */
+
+.gatewayapi-console-plugin__node--service {
+  fill: var(--pf-v6-global--palette--orange-100);
+  stroke: var(--pf-v6-global--palette--orange-500);
+}
+
+.gatewayapi-console-plugin__node--service:hover {
+  fill: var(--pf-v6-global--palette--orange-200);
+  stroke: var(--pf-v6-global--palette--orange-600);
+}

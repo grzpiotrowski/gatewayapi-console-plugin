@@ -24,5 +24,15 @@
   "GatewayClass": "GatewayClass",
   "GatewayClasses": "GatewayClasses",
   "Gateway": "Gateway",
-  "Gateways": "Gateways"
+  "Gateways": "Gateways",
+  "HTTPRoute": "HTTPRoute",
+  "HTTPRoutes": "HTTPRoutes",
+  "HR": "HR",
+  "SVC": "SVC",
+  "Service": "Service",
+  "Services": "Services",
+  "{{count}} rule": "{{count}} rule",
+  "{{count}} rule_other": "{{count}} rules",
+  "{{count}} backend": "{{count}} backend",
+  "{{count}} backend_other": "{{count}} backends"
 }

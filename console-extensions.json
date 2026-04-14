@@ -48,6 +48,21 @@
     }
   },
   {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "gateway.networking.k8s.io",
+        "version": "v1",
+        "kind": "HTTPRoute"
+      },
+      "plural": "httproutes",
+      "abbr": "HR",
+      "namespaced": true,
+      "label": "%plugin__gatewayapi-console-plugin~HTTPRoute%",
+      "labelPlural": "%plugin__gatewayapi-console-plugin~HTTPRoutes%"
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "exact": false,

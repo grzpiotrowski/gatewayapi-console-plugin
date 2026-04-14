@@ -1,0 +1,11 @@
+/* HTTPRoute Node Styling */
+
+.gatewayapi-console-plugin__node--httproute {
+  fill: var(--pf-v6-global--palette--green-100);
+  stroke: var(--pf-v6-global--palette--green-500);
+}
+
+.gatewayapi-console-plugin__node--httproute:hover {
+  fill: var(--pf-v6-global--palette--green-200);
+  stroke: var(--pf-v6-global--palette--green-600);
+}
