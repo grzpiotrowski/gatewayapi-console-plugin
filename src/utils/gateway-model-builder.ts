@@ -73,7 +73,7 @@ export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources)
       const node: NodeModel = {
         id: gwId,
         type: TYPE_GATEWAY,
-        label: getResourceLabel(gw),
+        label: getResourceLabel(gw, true), // Include namespace in label
         width: NODE_WIDTH,
         height: NODE_HEIGHT,
         data: {
@@ -81,6 +81,7 @@ export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources)
           resourceKind: 'Gateway',
           status: getGatewayStatus(gw),
           listeners: gw.spec.listeners,
+          namespace: gw.metadata?.namespace,
         },
       };
 

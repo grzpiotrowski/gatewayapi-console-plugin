@@ -79,6 +79,13 @@ export const hasCondition = (
 /**
  * Get human-readable label for a resource
  */
-export const getResourceLabel = (resource: { metadata?: { name?: string } }): string => {
-  return resource.metadata?.name || 'Unknown';
+export const getResourceLabel = (
+  resource: { metadata?: { name?: string; namespace?: string } },
+  includeNamespace = false,
+): string => {
+  const name = resource.metadata?.name || 'Unknown';
+  if (includeNamespace && resource.metadata?.namespace) {
+    return `${name}\n(${resource.metadata.namespace})`;
+  }
+  return name;
 };

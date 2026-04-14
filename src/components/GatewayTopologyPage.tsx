@@ -11,6 +11,9 @@ import {
   Spinner,
   Alert,
   AlertVariant,
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
 } from '@patternfly/react-core';
 import {
   Visualization,
@@ -24,14 +27,28 @@ import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
 import { useGatewayTopologyModel } from '../hooks/useGatewayTopologyModel';
 import { componentFactory } from './topology/componentFactory';
 import { layoutFactory, LAYOUT_TYPE_DAGRE } from './topology/layoutFactory';
+import { NamespaceSelector } from './NamespaceSelector';
 
 import './GatewayTopologyPage.css';
 
 const GatewayTopologyPage: React.FC = () => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
   const [activeNamespace] = useActiveNamespace();
-  const [model, loaded, loadError] = useGatewayTopologyModel(activeNamespace);
+
+  // Initialize with active namespace or empty (meaning all namespaces)
+  const [selectedNamespaces, setSelectedNamespaces] = React.useState<string[]>(() => {
+    return activeNamespace ? [activeNamespace] : [];
+  });
+
+  const [model, loaded, loadError] = useGatewayTopologyModel(selectedNamespaces);
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
+
+  // Update selected namespaces when active namespace changes
+  React.useEffect(() => {
+    if (activeNamespace && !selectedNamespaces.includes(activeNamespace)) {
+      setSelectedNamespaces([activeNamespace]);
+    }
+  }, [activeNamespace, selectedNamespaces]);
 
   // Debug logging
   React.useEffect(() => {
@@ -146,23 +163,36 @@ const GatewayTopologyPage: React.FC = () => {
 
   // Empty state
   if (!model.nodes || model.nodes.length === 0) {
+    const namespaceText =
+      selectedNamespaces.length === 0
+        ? t('No Gateway API resources were found in any namespace.')
+        : selectedNamespaces.length === 1
+          ? t('No Gateway API resources were found in the {{namespace}} namespace.', {
+              namespace: selectedNamespaces[0],
+            })
+          : t('No Gateway API resources were found in the selected namespaces.');
+
     return (
       <Page>
         <PageSection>
           <Title headingLevel="h1">{t('Gateway API Topology')}</Title>
         </PageSection>
+        <PageSection>
+          <Toolbar>
+            <ToolbarContent>
+              <ToolbarItem>
+                <NamespaceSelector
+                  selectedNamespaces={selectedNamespaces}
+                  onSelectionChange={setSelectedNamespaces}
+                />
+              </ToolbarItem>
+            </ToolbarContent>
+          </Toolbar>
+        </PageSection>
         <PageSection isFilled>
           <EmptyState>
-            <Title headingLevel="h2">
-              {t('No Gateway API resources found')}
-            </Title>
-            <EmptyStateBody>
-              {activeNamespace
-                ? t('No Gateway API resources were found in the {{namespace}} namespace.', {
-                    namespace: activeNamespace,
-                  })
-                : t('No Gateway API resources were found in any namespace.')}
-            </EmptyStateBody>
+            <Title headingLevel="h2">{t('No Gateway API resources found')}</Title>
+            <EmptyStateBody>{namespaceText}</EmptyStateBody>
             <EmptyStateBody>
               {t('Create a GatewayClass and Gateway to visualize your Gateway API configuration.')}
             </EmptyStateBody>
@@ -177,11 +207,18 @@ const GatewayTopologyPage: React.FC = () => {
     <Page>
       <PageSection>
         <Title headingLevel="h1">{t('Gateway API Topology')}</Title>
-        {activeNamespace && (
-          <p className="pf-v6-u-color-200">
-            {t('Namespace: {{namespace}}', { namespace: activeNamespace })}
-          </p>
-        )}
+      </PageSection>
+      <PageSection>
+        <Toolbar>
+          <ToolbarContent>
+            <ToolbarItem>
+              <NamespaceSelector
+                selectedNamespaces={selectedNamespaces}
+                onSelectionChange={setSelectedNamespaces}
+              />
+            </ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
       </PageSection>
       <PageSection isFilled className="gatewayapi-console-plugin__topology-page">
         <VisualizationProvider controller={controller}>

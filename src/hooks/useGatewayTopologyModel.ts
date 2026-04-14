@@ -11,10 +11,14 @@ import { Gateway, GatewayClass } from '../types/gateway-api';
  * Hook to watch Gateway API resources and build the topology model
  * Phase 1: Watches GatewayClass and Gateway resources only
  *
- * @param namespace - The namespace to watch (empty string for all namespaces)
+ * @param selectedNamespaces - Array of namespaces to watch (empty array or ['all'] for all namespaces)
  * @returns [model, loaded, loadError]
  */
-export const useGatewayTopologyModel = (namespace: string): [Model, boolean, any] => {
+export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, boolean, any] => {
+  // Watch all namespaces, filter client-side
+  // Empty array means show all namespaces
+  const watchAllNamespaces = selectedNamespaces.length === 0;
+
   // Define resources to watch
   const resources = React.useMemo(
     () => ({
@@ -34,11 +38,11 @@ export const useGatewayTopologyModel = (namespace: string): [Model, boolean, any
           version: GATEWAY_API_VERSION,
           kind: 'Gateway',
         },
-        namespace: namespace || undefined,
+        namespace: undefined, // Always watch all, filter client-side
         namespaced: true,
       },
     }),
-    [namespace],
+    [],
   );
 
   // Watch the resources
@@ -83,6 +87,12 @@ export const useGatewayTopologyModel = (namespace: string): [Model, boolean, any
       return [{ nodes: [], edges: [] }, true, error];
     }
 
+    // Filter gateways by selected namespaces
+    const allGateways = (rawWatchedResources.gateways.data || []) as Gateway[];
+    const filteredGateways = watchAllNamespaces
+      ? allGateways
+      : allGateways.filter((gw) => selectedNamespaces.includes(gw.metadata?.namespace || ''));
+
     // Convert WatchK8sResults to GatewayAPIWatchedResources format
     const watchedResources: GatewayAPIWatchedResources = {
       gatewayClasses: {
@@ -91,7 +101,7 @@ export const useGatewayTopologyModel = (namespace: string): [Model, boolean, any
         loadError: rawWatchedResources.gatewayClasses.loadError,
       },
       gateways: {
-        data: (rawWatchedResources.gateways.data || []) as Gateway[],
+        data: filteredGateways,
         loaded: rawWatchedResources.gateways.loaded,
         loadError: rawWatchedResources.gateways.loadError,
       },
@@ -99,7 +109,7 @@ export const useGatewayTopologyModel = (namespace: string): [Model, boolean, any
 
     const topologyModel = buildGatewayTopologyModel(watchedResources);
     return [topologyModel, true, null];
-  }, [rawWatchedResources]);
+  }, [rawWatchedResources, selectedNamespaces, watchAllNamespaces]);
 
   return [model, loaded, loadError];
 };
