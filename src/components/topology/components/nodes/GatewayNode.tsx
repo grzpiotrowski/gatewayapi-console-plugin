@@ -40,7 +40,9 @@ const GatewayNode: React.FC<GatewayNodeProps> = ({ element }) => {
           badgeColor="#0066CC"
           badgeClassName={`${CSS_PREFIX}__node-badge`}
           className={`${CSS_PREFIX}__node ${CSS_PREFIX}__node--gateway`}
-          secondaryLabel={listenerCount > 0 ? t('{{count}} listener', { count: listenerCount }) : undefined}
+          secondaryLabel={
+            listenerCount > 0 ? t('{{count}} listener', { count: listenerCount }) : undefined
+          }
         />
       </g>
     </Layer>

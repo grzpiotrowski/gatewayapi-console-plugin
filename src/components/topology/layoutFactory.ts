@@ -1,12 +1,6 @@
 // Layout Factory for Gateway API Topology
 
-import {
-  Graph,
-  Layout,
-  LayoutFactory,
-  DagreLayout,
-  ColaLayout,
-} from '@patternfly/react-topology';
+import { Graph, Layout, LayoutFactory, DagreLayout, ColaLayout } from '@patternfly/react-topology';
 import { LAYOUT_CONFIG } from '../../utils/gateway-constants';
 
 export const LAYOUT_TYPE_DAGRE = 'Dagre';

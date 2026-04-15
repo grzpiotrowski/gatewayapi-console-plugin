@@ -1,20 +1,65 @@
-/* Gateway API Topology Page Styles */
+/* Gateway API Topology Page Styles - Based on Kuadrant Console Plugin patterns */
 
-.gatewayapi-console-plugin__topology-page {
-  position: relative;
-  height: 100%;
-  overflow: hidden;
+/* Dark theme text visibility - critical for dark mode support */
+.pf-v6-theme-dark .gatewayapi-console-plugin__topology svg text,
+.pf-theme-dark .gatewayapi-console-plugin__topology svg text,
+.pf-v6-theme-dark .gatewayapi-console-plugin__topology .pf-topology-container__graph text,
+.pf-theme-dark .gatewayapi-console-plugin__topology .pf-topology-container__graph text,
+.pf-v6-theme-dark .gatewayapi-console-plugin__topology .pf-topology-visualization-surface svg text,
+.pf-theme-dark .gatewayapi-console-plugin__topology .pf-topology-visualization-surface svg text {
+  fill: #fff !important;
 }
 
-.gatewayapi-console-plugin__topology-page .pf-topology-visualization-surface {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+/* Light theme text visibility */
+.pf-v6-theme-light .gatewayapi-console-plugin__topology svg text,
+.pf-theme-light .gatewayapi-console-plugin__topology svg text {
+  fill: #151515 !important;
 }
 
-/* Ensure the topology surface fills the page section */
-.gatewayapi-console-plugin__topology-page > div {
-  height: 100%;
+/* Default light theme text */
+.gatewayapi-console-plugin__topology svg text {
+  fill: #151515;
+}
+
+/* Dark theme default */
+.pf-v6-theme-dark .gatewayapi-console-plugin__topology svg text {
+  fill: #fff !important;
+}
+
+/* Badge text - always white for contrast */
+.gatewayapi-console-plugin__topology .pf-topology__node__label__badge > text {
+  fill: #fff !important;
+}
+
+/* Dark theme icons */
+.pf-v6-theme-dark .gatewayapi-console-plugin__topology .gatewayapi-topology-node-icon,
+.pf-theme-dark .gatewayapi-console-plugin__topology .gatewayapi-topology-node-icon {
+  color: var(--pf-v6-global--Color--light-100) !important;
+  fill: var(--pf-v6-global--Color--light-100) !important;
+}
+
+/* Light theme icons */
+.pf-v6-theme-light .gatewayapi-console-plugin__topology .gatewayapi-topology-node-icon,
+.pf-theme-light .gatewayapi-console-plugin__topology .gatewayapi-topology-node-icon {
+  color: var(--pf-v6-global--Color--dark-200) !important;
+  fill: var(--pf-v6-global--Color--dark-200) !important;
+}
+
+/* Group label styling */
+.gatewayapi-console-plugin__topology .pf-topology__group__label .pf-topology__node__label__background {
+  fill: var(--pf-v6-global--BackgroundColor--dark-300) !important;
+}
+
+.gatewayapi-console-plugin__topology g.pf-topology__group__label > text {
+  fill: #fff !important;
+}
+
+/* Hover state for group labels */
+.gatewayapi-console-plugin__topology .pf-topology__group.pf-m-hover g.pf-topology__group__label > text {
+  fill: #fff !important;
+}
+
+/* Additional specificity for group labels */
+.gatewayapi-console-plugin__topology .pf-topology-visualization-surface g.pf-topology__group__label > text {
+  fill: #fff !important;
 }

@@ -135,11 +135,7 @@ export const NamespaceSelector: React.FC<NamespaceSelectorProps> = ({
         />
         {filterValue && (
           <TextInputGroupUtilities>
-            <Button
-              variant="plain"
-              onClick={clearFilter}
-              aria-label={t('Clear filter')}
-            >
+            <Button variant="plain" onClick={clearFilter} aria-label={t('Clear filter')}>
               <TimesIcon />
             </Button>
           </TextInputGroupUtilities>

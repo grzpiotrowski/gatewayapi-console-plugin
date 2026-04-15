@@ -4,7 +4,10 @@ import * as React from 'react';
 import { Model } from '@patternfly/react-topology';
 import { useK8sWatchResources } from '@openshift-console/dynamic-plugin-sdk';
 import { GATEWAY_API_GROUP, GATEWAY_API_VERSION } from '../utils/gateway-constants';
-import { buildGatewayTopologyModel, GatewayAPIWatchedResources } from '../utils/gateway-model-builder';
+import {
+  buildGatewayTopologyModel,
+  GatewayAPIWatchedResources,
+} from '../utils/gateway-model-builder';
 import { Gateway, GatewayClass, HTTPRoute, Service } from '../types/gateway-api';
 
 /**
@@ -98,7 +101,8 @@ export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, b
     });
 
     const allLoaded =
-      (rawWatchedResources.gatewayClasses.loaded || !!rawWatchedResources.gatewayClasses.loadError) &&
+      (rawWatchedResources.gatewayClasses.loaded ||
+        !!rawWatchedResources.gatewayClasses.loadError) &&
       (rawWatchedResources.gateways.loaded || !!rawWatchedResources.gateways.loadError) &&
       (rawWatchedResources.httpRoutes.loaded || !!rawWatchedResources.httpRoutes.loadError) &&
       (rawWatchedResources.services.loaded || !!rawWatchedResources.services.loadError);
@@ -129,7 +133,9 @@ export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, b
 
     const filteredHTTPRoutes = watchAllNamespaces
       ? allHTTPRoutes
-      : allHTTPRoutes.filter((route) => selectedNamespaces.includes(route.metadata?.namespace || ''));
+      : allHTTPRoutes.filter((route) =>
+          selectedNamespaces.includes(route.metadata?.namespace || ''),
+        );
 
     const filteredServices = watchAllNamespaces
       ? allServices

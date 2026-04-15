@@ -150,7 +150,12 @@ export interface HTTPURLRewriteFilter {
 }
 
 export interface HTTPRouteFilter {
-  type: 'RequestHeaderModifier' | 'ResponseHeaderModifier' | 'RequestRedirect' | 'URLRewrite' | 'ExtensionRef';
+  type:
+    | 'RequestHeaderModifier'
+    | 'ResponseHeaderModifier'
+    | 'RequestRedirect'
+    | 'URLRewrite'
+    | 'ExtensionRef';
   requestHeaderModifier?: HTTPRequestHeaderFilter;
   responseHeaderModifier?: HTTPRequestHeaderFilter;
   requestRedirect?: HTTPRequestRedirectFilter;

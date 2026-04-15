@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Page,
   PageSection,
   Title,
   EmptyState,
@@ -14,11 +13,15 @@ import {
   Toolbar,
   ToolbarContent,
   ToolbarItem,
+  Card,
+  CardTitle,
+  CardBody,
 } from '@patternfly/react-core';
 import {
   Visualization,
   VisualizationProvider,
   VisualizationSurface,
+  TopologyView,
   Model,
   SELECTION_EVENT,
   SelectionEventListener,
@@ -126,106 +129,73 @@ const GatewayTopologyPage: React.FC = () => {
     };
   }, [controller]);
 
-  // Loading state
-  if (!loaded) {
-    return (
-      <Page>
-        <PageSection>
-          <Title headingLevel="h1">{t('Gateway API Topology')}</Title>
-        </PageSection>
-        <PageSection isFilled>
-          <EmptyState>
-            <Spinner />
-            <Title headingLevel="h2" size="lg">
-              {t('Loading topology')}
-            </Title>
-          </EmptyState>
-        </PageSection>
-      </Page>
-    );
-  }
-
-  // Error state
-  if (loadError) {
-    return (
-      <Page>
-        <PageSection>
-          <Title headingLevel="h1">{t('Gateway API Topology')}</Title>
-        </PageSection>
-        <PageSection isFilled>
-          <Alert variant={AlertVariant.danger} title={t('Error loading topology')} isInline>
-            <p>{loadError.message || t('An error occurred while loading the topology.')}</p>
-          </Alert>
-        </PageSection>
-      </Page>
-    );
-  }
-
-  // Empty state
-  if (!model.nodes || model.nodes.length === 0) {
-    const namespaceText =
-      selectedNamespaces.length === 0
-        ? t('No Gateway API resources were found in any namespace.')
-        : selectedNamespaces.length === 1
-          ? t('No Gateway API resources were found in the {{namespace}} namespace.', {
-              namespace: selectedNamespaces[0],
-            })
-          : t('No Gateway API resources were found in the selected namespaces.');
-
-    return (
-      <Page>
-        <PageSection>
-          <Title headingLevel="h1">{t('Gateway API Topology')}</Title>
-        </PageSection>
-        <PageSection>
-          <Toolbar>
-            <ToolbarContent>
-              <ToolbarItem>
-                <NamespaceSelector
-                  selectedNamespaces={selectedNamespaces}
-                  onSelectionChange={setSelectedNamespaces}
-                />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
-        </PageSection>
-        <PageSection isFilled>
-          <EmptyState>
-            <Title headingLevel="h2">{t('No Gateway API resources found')}</Title>
-            <EmptyStateBody>{namespaceText}</EmptyStateBody>
-            <EmptyStateBody>
-              {t('Create a GatewayClass and Gateway to visualize your Gateway API configuration.')}
-            </EmptyStateBody>
-          </EmptyState>
-        </PageSection>
-      </Page>
-    );
-  }
-
-  // Topology view
+  // Render - matches Kuadrant pattern with Card and explicit height
   return (
-    <Page>
+    <>
       <PageSection>
         <Title headingLevel="h1">{t('Gateway API Topology')}</Title>
+        <Card>
+          <CardTitle>{t('Topology View')}</CardTitle>
+          <CardBody>
+            {/* Toolbar with namespace selector */}
+            <Toolbar>
+              <ToolbarContent>
+                <ToolbarItem>
+                  <NamespaceSelector
+                    selectedNamespaces={selectedNamespaces}
+                    onSelectionChange={setSelectedNamespaces}
+                  />
+                </ToolbarItem>
+              </ToolbarContent>
+            </Toolbar>
+
+            {/* Loading state */}
+            {!loaded ? (
+              <EmptyState>
+                <Spinner />
+                <Title headingLevel="h2" size="lg">
+                  {t('Loading topology')}
+                </Title>
+              </EmptyState>
+            ) : loadError ? (
+              /* Error state */
+              <Alert variant={AlertVariant.danger} title={t('Error loading topology')} isInline>
+                <p>{loadError.message || t('An error occurred while loading the topology.')}</p>
+              </Alert>
+            ) : !model.nodes || model.nodes.length === 0 ? (
+              /* Empty state */
+              <EmptyState>
+                <Title headingLevel="h2">{t('No Gateway API resources found')}</Title>
+                <EmptyStateBody>
+                  {selectedNamespaces.length === 0
+                    ? t('No Gateway API resources were found in any namespace.')
+                    : selectedNamespaces.length === 1
+                      ? t('No Gateway API resources were found in the {{namespace}} namespace.', {
+                          namespace: selectedNamespaces[0],
+                        })
+                      : t('No Gateway API resources were found in the selected namespaces.')}
+                </EmptyStateBody>
+                <EmptyStateBody>
+                  {t(
+                    'Create a GatewayClass and Gateway to visualize your Gateway API configuration.',
+                  )}
+                </EmptyStateBody>
+              </EmptyState>
+            ) : (
+              /* Topology view with explicit height - matches Kuadrant pattern */
+              <TopologyView
+                style={{ height: '70vh' }}
+                className="gatewayapi-console-plugin__topology"
+              >
+                <VisualizationProvider controller={controller}>
+                  <VisualizationSurface state={{ selectedIds }} />
+                </VisualizationProvider>
+              </TopologyView>
+            )}
+          </CardBody>
+        </Card>
       </PageSection>
-      <PageSection>
-        <Toolbar>
-          <ToolbarContent>
-            <ToolbarItem>
-              <NamespaceSelector
-                selectedNamespaces={selectedNamespaces}
-                onSelectionChange={setSelectedNamespaces}
-              />
-            </ToolbarItem>
-          </ToolbarContent>
-        </Toolbar>
-      </PageSection>
-      <PageSection isFilled className="gatewayapi-console-plugin__topology-page">
-        <VisualizationProvider controller={controller}>
-          <VisualizationSurface state={{ selectedIds }} />
-        </VisualizationProvider>
-      </PageSection>
-    </Page>
+    </>
   );
 };
 

@@ -33,7 +33,10 @@ export const getServiceId = (service: Pick<Service, 'metadata'>): string => {
 /**
  * Generate a unique ID for a Listener (derived from Gateway)
  */
-export const getListenerId = (gateway: Pick<Gateway, 'metadata'>, listenerIndex: number): string => {
+export const getListenerId = (
+  gateway: Pick<Gateway, 'metadata'>,
+  listenerIndex: number,
+): string => {
   return `${getGatewayId(gateway)}_listener_${listenerIndex}`;
 };
 
