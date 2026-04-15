@@ -1,0 +1,27 @@
+/* Listener Node Styles */
+
+.gatewayapi-console-plugin__node--listener .pf-topology__node__background {
+  fill: var(--pf-v6-global--palette--cyan-50);
+  stroke: var(--pf-v6-global--palette--cyan-400);
+  stroke-width: 2;
+}
+
+.gatewayapi-console-plugin__node--listener:hover .pf-topology__node__background {
+  fill: var(--pf-v6-global--palette--cyan-100);
+  stroke: var(--pf-v6-global--palette--cyan-500);
+  stroke-width: 2.5;
+}
+
+/* Dark theme support */
+.pf-v6-theme-dark .gatewayapi-console-plugin__node--listener .pf-topology__node__background,
+.pf-theme-dark .gatewayapi-console-plugin__node--listener .pf-topology__node__background {
+  fill: var(--pf-v6-global--palette--cyan-400);
+  fill-opacity: 0.2;
+  stroke: var(--pf-v6-global--palette--cyan-300);
+}
+
+.pf-v6-theme-dark .gatewayapi-console-plugin__node--listener:hover .pf-topology__node__background,
+.pf-theme-dark .gatewayapi-console-plugin__node--listener:hover .pf-topology__node__background {
+  fill-opacity: 0.3;
+  stroke: var(--pf-v6-global--palette--cyan-200);
+}

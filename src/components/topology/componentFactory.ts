@@ -9,14 +9,17 @@ import {
 import {
   TYPE_GATEWAY_CLASS,
   TYPE_GATEWAY,
+  TYPE_LISTENER,
   TYPE_HTTP_ROUTE,
   TYPE_SERVICE,
   TYPE_GATEWAY_TO_CLASS,
+  TYPE_LISTENER_TO_GATEWAY,
   TYPE_ROUTE_TO_LISTENER,
   TYPE_ROUTE_TO_SERVICE,
 } from '../../utils/gateway-constants';
 import GatewayClassNode from './components/nodes/GatewayClassNode';
 import GatewayNode from './components/nodes/GatewayNode';
+import ListenerNode from './components/nodes/ListenerNode';
 import HTTPRouteNode from './components/nodes/HTTPRouteNode';
 import ServiceNode from './components/nodes/ServiceNode';
 import GatewayEdge from './components/edges/GatewayEdge';
@@ -34,6 +37,9 @@ export const componentFactory: ComponentFactory = (kind, type) => {
     case TYPE_GATEWAY:
       return GatewayNode;
 
+    case TYPE_LISTENER:
+      return ListenerNode;
+
     case TYPE_HTTP_ROUTE:
       return HTTPRouteNode;
 
@@ -42,6 +48,7 @@ export const componentFactory: ComponentFactory = (kind, type) => {
 
     // Edge types
     case TYPE_GATEWAY_TO_CLASS:
+    case TYPE_LISTENER_TO_GATEWAY:
     case TYPE_ROUTE_TO_LISTENER:
     case TYPE_ROUTE_TO_SERVICE:
       return GatewayEdge;

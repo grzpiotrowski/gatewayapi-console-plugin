@@ -5,13 +5,17 @@ import { Gateway, GatewayClass, HTTPRoute, Service } from '../types/gateway-api'
 import {
   TYPE_GATEWAY_CLASS,
   TYPE_GATEWAY,
+  TYPE_LISTENER,
   TYPE_HTTP_ROUTE,
   TYPE_SERVICE,
   TYPE_GATEWAY_TO_CLASS,
+  TYPE_LISTENER_TO_GATEWAY,
   TYPE_ROUTE_TO_LISTENER,
   TYPE_ROUTE_TO_SERVICE,
   NODE_WIDTH,
   NODE_HEIGHT,
+  LISTENER_NODE_WIDTH,
+  LISTENER_NODE_HEIGHT,
 } from './gateway-constants';
 import {
   getGatewayClassId,
@@ -48,7 +52,7 @@ export interface GatewayAPIWatchedResources {
 
 /**
  * Build the Gateway API topology model from watched resources
- * Phase 2: GatewayClass, Gateway, HTTPRoute, and Service nodes
+ * Phase 3: GatewayClass, Gateway, Listener, HTTPRoute, and Service nodes
  */
 export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources): Model => {
   const nodes: NodeModel[] = [];
@@ -115,10 +119,45 @@ export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources)
 
         edges.push(edge);
       }
+
+      // Create Listener nodes for each listener in the Gateway
+      if (gw.spec.listeners && gw.spec.listeners.length > 0) {
+        gw.spec.listeners.forEach((listener) => {
+          const listenerId = `${gwId}_listener_${listener.name}`;
+
+          const listenerNode: NodeModel = {
+            id: listenerId,
+            type: TYPE_LISTENER,
+            label: listener.name,
+            width: LISTENER_NODE_WIDTH,
+            height: LISTENER_NODE_HEIGHT,
+            data: {
+              resource: listener,
+              resourceKind: 'Listener',
+              gatewayId: gwId,
+              gatewayName: gw.metadata?.name,
+              gatewayNamespace: gw.metadata?.namespace,
+            },
+          };
+
+          nodes.push(listenerNode);
+
+          // Edge: Gateway → Listener
+          const listenerEdge: EdgeModel = {
+            id: `${gwId}_to_${listenerId}`,
+            type: TYPE_LISTENER_TO_GATEWAY,
+            source: gwId,
+            target: listenerId,
+            edgeStyle: EdgeStyle.solid,
+          };
+
+          edges.push(listenerEdge);
+        });
+      }
     });
   }
 
-  // 3. Create HTTPRoute nodes and edges to Gateways and Services
+  // 3. Create HTTPRoute nodes and edges to Listeners and Services
   if (resources.httpRoutes?.data) {
     resources.httpRoutes.data.forEach((route: HTTPRoute) => {
       const routeId = getHTTPRouteId(route);
@@ -140,7 +179,7 @@ export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources)
 
       nodes.push(node);
 
-      // Edges: Gateway → HTTPRoute (for proper hierarchy)
+      // Edges: Listener → HTTPRoute (for proper hierarchy)
       route.spec.parentRefs?.forEach((parentRef) => {
         if (parentRef.kind === 'Gateway' || !parentRef.kind) {
           const gwNamespace = parentRef.namespace || route.metadata?.namespace;
@@ -151,18 +190,47 @@ export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources)
             },
           } as Gateway);
 
-          // Only create edge if the Gateway exists in the model
-          const gwExists = nodes.some((n) => n.id === gwId);
-          if (gwExists) {
-            const edge: EdgeModel = {
-              id: `${gwId}_to_${routeId}`,
-              type: TYPE_ROUTE_TO_LISTENER,
-              source: gwId,
-              target: routeId,
-              edgeStyle: EdgeStyle.solid,
-            };
+          // If sectionName is specified, connect to specific Listener
+          if (parentRef.sectionName) {
+            const listenerId = `${gwId}_listener_${parentRef.sectionName}`;
+            const listenerExists = nodes.some((n) => n.id === listenerId);
 
-            edges.push(edge);
+            if (listenerExists) {
+              const edge: EdgeModel = {
+                id: `${listenerId}_to_${routeId}`,
+                type: TYPE_ROUTE_TO_LISTENER,
+                source: listenerId,
+                target: routeId,
+                edgeStyle: EdgeStyle.solid,
+              };
+
+              edges.push(edge);
+            }
+          } else {
+            // Connect to all listeners of the Gateway
+            const gateway = resources.gateways?.data.find(
+              (gw) =>
+                gw.metadata?.name === parentRef.name && gw.metadata?.namespace === gwNamespace,
+            );
+
+            if (gateway?.spec.listeners) {
+              gateway.spec.listeners.forEach((listener) => {
+                const listenerId = `${gwId}_listener_${listener.name}`;
+                const listenerExists = nodes.some((n) => n.id === listenerId);
+
+                if (listenerExists) {
+                  const edge: EdgeModel = {
+                    id: `${listenerId}_to_${routeId}_${listener.name}`,
+                    type: TYPE_ROUTE_TO_LISTENER,
+                    source: listenerId,
+                    target: routeId,
+                    edgeStyle: EdgeStyle.solid,
+                  };
+
+                  edges.push(edge);
+                }
+              });
+            }
           }
         }
       });
