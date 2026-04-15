@@ -33,6 +33,7 @@ import { layoutFactory, LAYOUT_TYPE_DAGRE } from './topology/layoutFactory';
 import { NamespaceSelector } from './NamespaceSelector';
 
 import './GatewayTopologyPage.css';
+import './topology/components/edges/GatewayEdge.css';
 
 const GatewayTopologyPage: React.FC = () => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
@@ -129,7 +130,7 @@ const GatewayTopologyPage: React.FC = () => {
     };
   }, [controller]);
 
-  // Render - matches Kuadrant pattern with Card and explicit height
+  // Render
   return (
     <>
       <PageSection>
@@ -182,7 +183,7 @@ const GatewayTopologyPage: React.FC = () => {
                 </EmptyStateBody>
               </EmptyState>
             ) : (
-              /* Topology view with explicit height - matches Kuadrant pattern */
+              /* Topology view with explicit height */
               <TopologyView
                 style={{ height: '70vh' }}
                 className="gatewayapi-console-plugin__topology"

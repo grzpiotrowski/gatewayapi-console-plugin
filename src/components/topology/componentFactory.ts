@@ -5,6 +5,8 @@ import {
   GraphComponent,
   ModelKind,
   withPanZoom,
+  withSelection,
+  DefaultEdge,
 } from '@patternfly/react-topology';
 import {
   TYPE_GATEWAY_CLASS,
@@ -22,7 +24,6 @@ import GatewayNode from './components/nodes/GatewayNode';
 import ListenerNode from './components/nodes/ListenerNode';
 import HTTPRouteNode from './components/nodes/HTTPRouteNode';
 import ServiceNode from './components/nodes/ServiceNode';
-import GatewayEdge from './components/edges/GatewayEdge';
 
 /**
  * Component factory for Gateway API topology
@@ -46,12 +47,12 @@ export const componentFactory: ComponentFactory = (kind, type) => {
     case TYPE_SERVICE:
       return ServiceNode;
 
-    // Edge types
+    // Edge types - use DefaultEdge with selection HOC
     case TYPE_GATEWAY_TO_CLASS:
     case TYPE_LISTENER_TO_GATEWAY:
     case TYPE_ROUTE_TO_LISTENER:
     case TYPE_ROUTE_TO_SERVICE:
-      return GatewayEdge;
+      return withSelection()(DefaultEdge);
 
     default:
       switch (kind) {

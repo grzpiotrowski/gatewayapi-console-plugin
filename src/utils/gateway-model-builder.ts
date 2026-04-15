@@ -22,8 +22,11 @@ import {
   getGatewayId,
   getHTTPRouteId,
   getServiceId,
+  getListenerId,
   getResourceLabel,
   getReferencedServices,
+  isListenerHostnameCompatible,
+  isListenerPrimary,
 } from './gateway-utils';
 import { getGatewayClassStatus, getGatewayStatus, getHTTPRouteStatus } from './gateway-status';
 
@@ -123,7 +126,7 @@ export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources)
       // Create Listener nodes for each listener in the Gateway
       if (gw.spec.listeners && gw.spec.listeners.length > 0) {
         gw.spec.listeners.forEach((listener) => {
-          const listenerId = `${gwId}_listener_${listener.name}`;
+          const listenerId = getListenerId(gw, listener.name);
 
           const listenerNode: NodeModel = {
             id: listenerId,
@@ -183,16 +186,18 @@ export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources)
       route.spec.parentRefs?.forEach((parentRef) => {
         if (parentRef.kind === 'Gateway' || !parentRef.kind) {
           const gwNamespace = parentRef.namespace || route.metadata?.namespace;
-          const gwId = getGatewayId({
+
+          // Create a gateway reference for ID generation
+          const gwRef = {
             metadata: {
               name: parentRef.name,
               namespace: gwNamespace,
             },
-          } as Gateway);
+          } as Gateway;
 
           // If sectionName is specified, connect to specific Listener
           if (parentRef.sectionName) {
-            const listenerId = `${gwId}_listener_${parentRef.sectionName}`;
+            const listenerId = getListenerId(gwRef, parentRef.sectionName);
             const listenerExists = nodes.some((n) => n.id === listenerId);
 
             if (listenerExists) {
@@ -205,31 +210,74 @@ export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources)
               };
 
               edges.push(edge);
+            } else {
+              console.warn(
+                `[GatewayModelBuilder] Listener not found: ${listenerId} for HTTPRoute ${routeId}`,
+              );
             }
           } else {
-            // Connect to all listeners of the Gateway
+            // Connect to all compatible listeners of the Gateway
             const gateway = resources.gateways?.data.find(
               (gw) =>
                 gw.metadata?.name === parentRef.name && gw.metadata?.namespace === gwNamespace,
             );
 
             if (gateway?.spec.listeners) {
+              // First pass: find all compatible listeners
+              const compatibleListeners = gateway.spec.listeners.filter((listener) =>
+                isListenerHostnameCompatible(listener.hostname, route.spec.hostnames),
+              );
+
+              // Second pass: create edges with appropriate style
               gateway.spec.listeners.forEach((listener) => {
-                const listenerId = `${gwId}_listener_${listener.name}`;
+                // Check if listener hostname is compatible with route hostnames
+                const isCompatible = isListenerHostnameCompatible(
+                  listener.hostname,
+                  route.spec.hostnames,
+                );
+
+                if (!isCompatible) {
+                  console.debug(
+                    `[GatewayModelBuilder] Skipping listener ${listener.name} for HTTPRoute ${routeId}: hostname mismatch (listener: ${listener.hostname}, route: ${route.spec.hostnames?.join(', ')})`,
+                  );
+                  return;
+                }
+
+                const listenerId = getListenerId(gateway, listener.name);
                 const listenerExists = nodes.some((n) => n.id === listenerId);
 
                 if (listenerExists) {
+                  // Determine if this listener is primary (handles actual traffic)
+                  const isPrimary = isListenerPrimary(
+                    listener,
+                    compatibleListeners,
+                    route.spec.hostnames,
+                  );
+
                   const edge: EdgeModel = {
                     id: `${listenerId}_to_${routeId}_${listener.name}`,
                     type: TYPE_ROUTE_TO_LISTENER,
                     source: listenerId,
                     target: routeId,
-                    edgeStyle: EdgeStyle.solid,
+                    // Solid line for primary (active), dashed for fallback
+                    edgeStyle: isPrimary ? EdgeStyle.solid : EdgeStyle.dashed,
                   };
 
                   edges.push(edge);
+
+                  console.debug(
+                    `[GatewayModelBuilder] Connected listener ${listener.name} to HTTPRoute ${routeId}: ${isPrimary ? 'PRIMARY (solid)' : 'FALLBACK (dashed)'}`,
+                  );
+                } else {
+                  console.warn(
+                    `[GatewayModelBuilder] Listener not found: ${listenerId} for HTTPRoute ${routeId}`,
+                  );
                 }
               });
+            } else {
+              console.warn(
+                `[GatewayModelBuilder] Gateway not found or has no listeners: ${parentRef.name} in namespace ${gwNamespace} for HTTPRoute ${routeId}`,
+              );
             }
           }
         }

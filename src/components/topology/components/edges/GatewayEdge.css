@@ -1,20 +1,37 @@
-/* Gateway Edge Styles */
+/* Gateway Edge Styles - applies to all edges in topology */
 
-.gatewayapi-console-plugin__edge .pf-topology__edge__link {
+.gatewayapi-console-plugin__topology .pf-topology__edge__link {
   stroke: var(--pf-v6-global-palette--black-600);
   stroke-width: 1.5px;
-  stroke-dasharray: 5, 5;
+  /* stroke-dasharray removed - let EdgeStyle.solid/dashed control this */
 }
 
-.gatewayapi-console-plugin__edge:hover .pf-topology__edge__link {
+.gatewayapi-console-plugin__topology .pf-topology__edge:hover .pf-topology__edge__link {
   stroke: var(--pf-v6-global-palette--black-900);
   stroke-width: 2px;
 }
 
-.gatewayapi-console-plugin__edge .pf-topology-connector-arrow {
+.gatewayapi-console-plugin__topology .pf-topology-connector-arrow {
   fill: var(--pf-v6-global-palette--black-600);
 }
 
-.gatewayapi-console-plugin__edge:hover .pf-topology-connector-arrow {
+.gatewayapi-console-plugin__topology .pf-topology__edge:hover .pf-topology-connector-arrow {
   fill: var(--pf-v6-global-palette--black-900);
+}
+
+/* Dark theme support */
+.pf-v6-theme-dark .gatewayapi-console-plugin__topology .pf-topology__edge__link {
+  stroke: var(--pf-v6-global-palette--black-300);
+}
+
+.pf-v6-theme-dark .gatewayapi-console-plugin__topology .pf-topology__edge:hover .pf-topology__edge__link {
+  stroke: var(--pf-v6-global-palette--black-100);
+}
+
+.pf-v6-theme-dark .gatewayapi-console-plugin__topology .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global-palette--black-300);
+}
+
+.pf-v6-theme-dark .gatewayapi-console-plugin__topology .pf-topology__edge:hover .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global-palette--black-100);
 }
