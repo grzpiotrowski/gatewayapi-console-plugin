@@ -15,11 +15,12 @@ import { CSS_PREFIX, DEFAULT_LAYER, TOP_LAYER } from '../../../../utils/gateway-
 
 import './HTTPRouteNode.css';
 
-interface HTTPRouteNodeProps {
+type NodeProps = {
   element: GraphElement;
-}
+  [key: string]: any;
+};
 
-const HTTPRouteNode: React.FC<HTTPRouteNodeProps> = ({ element }) => {
+const HTTPRouteNode: React.FC<NodeProps> = ({ element, ...rest }) => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
   const [hover, hoverRef] = useHover();
   const data = element.getData();
@@ -41,6 +42,7 @@ const HTTPRouteNode: React.FC<HTTPRouteNodeProps> = ({ element }) => {
           badgeClassName={`${CSS_PREFIX}__node-badge`}
           className={`${CSS_PREFIX}__node ${CSS_PREFIX}__node--httproute`}
           secondaryLabel={ruleCount > 0 ? t('{{count}} rule', { count: ruleCount }) : undefined}
+          {...rest}
         />
       </g>
     </Layer>

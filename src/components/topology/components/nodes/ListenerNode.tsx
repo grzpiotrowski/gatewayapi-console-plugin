@@ -15,11 +15,12 @@ import { CSS_PREFIX, DEFAULT_LAYER, TOP_LAYER } from '../../../../utils/gateway-
 
 import './ListenerNode.css';
 
-interface ListenerNodeProps {
+type NodeProps = {
   element: GraphElement;
-}
+  [key: string]: any;
+};
 
-const ListenerNode: React.FC<ListenerNodeProps> = ({ element }) => {
+const ListenerNode: React.FC<NodeProps> = ({ element, ...rest }) => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
   const [hover, hoverRef] = useHover();
   const data = element.getData();
@@ -43,6 +44,7 @@ const ListenerNode: React.FC<ListenerNodeProps> = ({ element }) => {
           badgeClassName={`${CSS_PREFIX}__node-badge`}
           className={`${CSS_PREFIX}__node ${CSS_PREFIX}__node--listener`}
           secondaryLabel={secondaryLabel}
+          {...rest}
         />
       </g>
     </Layer>

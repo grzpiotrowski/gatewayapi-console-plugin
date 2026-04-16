@@ -31,21 +31,21 @@ import ServiceNode from './components/nodes/ServiceNode';
  */
 export const componentFactory: ComponentFactory = (kind, type) => {
   switch (type) {
-    // Node types
+    // Node types - with controlled selection
     case TYPE_GATEWAY_CLASS:
-      return GatewayClassNode;
+      return withSelection({ controlled: true })(GatewayClassNode as any);
 
     case TYPE_GATEWAY:
-      return GatewayNode;
+      return withSelection({ controlled: true })(GatewayNode as any);
 
     case TYPE_LISTENER:
-      return ListenerNode;
+      return withSelection({ controlled: true })(ListenerNode as any);
 
     case TYPE_HTTP_ROUTE:
-      return HTTPRouteNode;
+      return withSelection({ controlled: true })(HTTPRouteNode as any);
 
     case TYPE_SERVICE:
-      return ServiceNode;
+      return withSelection({ controlled: true })(ServiceNode as any);
 
     // Edge types - use DefaultEdge with selection HOC
     case TYPE_GATEWAY_TO_CLASS:

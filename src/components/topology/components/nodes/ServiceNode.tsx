@@ -15,11 +15,12 @@ import { CSS_PREFIX, DEFAULT_LAYER, TOP_LAYER } from '../../../../utils/gateway-
 
 import './ServiceNode.css';
 
-interface ServiceNodeProps {
+type NodeProps = {
   element: GraphElement;
-}
+  [key: string]: any;
+};
 
-const ServiceNode: React.FC<ServiceNodeProps> = ({ element }) => {
+const ServiceNode: React.FC<NodeProps> = ({ element, ...rest }) => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
   const [hover, hoverRef] = useHover();
   const data = element.getData();
@@ -42,6 +43,7 @@ const ServiceNode: React.FC<ServiceNodeProps> = ({ element }) => {
           secondaryLabel={
             portCount > 0 ? `${portCount} ${portCount === 1 ? 'port' : 'ports'}` : undefined
           }
+          {...rest}
         />
       </g>
     </Layer>

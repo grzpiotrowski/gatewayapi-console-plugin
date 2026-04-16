@@ -15,11 +15,12 @@ import { CSS_PREFIX, DEFAULT_LAYER, TOP_LAYER } from '../../../../utils/gateway-
 
 import './GatewayClassNode.css';
 
-interface GatewayClassNodeProps {
+type NodeProps = {
   element: GraphElement;
-}
+  [key: string]: any;
+};
 
-const GatewayClassNode: React.FC<GatewayClassNodeProps> = ({ element }) => {
+const GatewayClassNode: React.FC<NodeProps> = ({ element, ...rest }) => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
   const [hover, hoverRef] = useHover();
   const data = element.getData();
@@ -39,6 +40,7 @@ const GatewayClassNode: React.FC<GatewayClassNodeProps> = ({ element }) => {
           badgeColor="#8461C9"
           badgeClassName={`${CSS_PREFIX}__node-badge`}
           className={`${CSS_PREFIX}__node ${CSS_PREFIX}__node--gateway-class`}
+          {...rest}
         />
       </g>
     </Layer>

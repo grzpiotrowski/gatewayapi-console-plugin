@@ -1,0 +1,23 @@
+/* Topology Sidebar Styles */
+
+.gatewayapi-console-plugin__sidebar-details {
+  padding: var(--pf-v6-global--spacer--md);
+}
+
+.gatewayapi-console-plugin__sidebar-details .pf-v6-c-description-list {
+  margin-top: var(--pf-v6-global--spacer--md);
+}
+
+.gatewayapi-console-plugin__sidebar-details .pf-v6-c-description-list__group {
+  margin-bottom: var(--pf-v6-global--spacer--sm);
+}
+
+.gatewayapi-console-plugin__sidebar-details .pf-v6-c-label {
+  margin-right: var(--pf-v6-global--spacer--xs);
+  margin-bottom: var(--pf-v6-global--spacer--xs);
+}
+
+/* Dark theme support */
+.pf-v6-theme-dark .gatewayapi-console-plugin__sidebar-details {
+  background-color: var(--pf-v6-global--BackgroundColor--dark-100);
+}

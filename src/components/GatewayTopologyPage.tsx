@@ -25,12 +25,14 @@ import {
   Model,
   SELECTION_EVENT,
   SelectionEventListener,
+  GraphElement,
 } from '@patternfly/react-topology';
 import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
 import { useGatewayTopologyModel } from '../hooks/useGatewayTopologyModel';
 import { componentFactory } from './topology/componentFactory';
 import { layoutFactory, LAYOUT_TYPE_DAGRE } from './topology/layoutFactory';
 import { NamespaceSelector } from './NamespaceSelector';
+import { TopologySideBar } from './topology/sidebar/TopologySideBar';
 
 import './GatewayTopologyPage.css';
 import './topology/components/edges/GatewayEdge.css';
@@ -46,6 +48,8 @@ const GatewayTopologyPage: React.FC = () => {
 
   const [model, loaded, loadError] = useGatewayTopologyModel(selectedNamespaces);
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
+  const [selectedElement, setSelectedElement] = React.useState<GraphElement | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState<boolean>(false);
 
   // Update selected namespaces when active namespace changes
   React.useEffect(() => {
@@ -123,12 +127,31 @@ const GatewayTopologyPage: React.FC = () => {
   React.useEffect(() => {
     const onSelect: SelectionEventListener = (ids: string[]) => {
       setSelectedIds(ids);
+
+      if (ids.length > 0) {
+        // Get the first selected element
+        const element = controller.getElementById(ids[0]);
+        if (element) {
+          setSelectedElement(element);
+          setIsSidebarOpen(true);
+        }
+      } else {
+        setSelectedElement(null);
+        setIsSidebarOpen(false);
+      }
     };
     controller.addEventListener(SELECTION_EVENT, onSelect);
     return () => {
       controller.removeEventListener(SELECTION_EVENT, onSelect);
     };
   }, [controller]);
+
+  // Handle sidebar close
+  const handleSidebarClose = React.useCallback(() => {
+    setIsSidebarOpen(false);
+    setSelectedIds([]);
+    setSelectedElement(null);
+  }, []);
 
   // Render
   return (
@@ -183,15 +206,21 @@ const GatewayTopologyPage: React.FC = () => {
                 </EmptyStateBody>
               </EmptyState>
             ) : (
-              /* Topology view with explicit height */
-              <TopologyView
-                style={{ height: '70vh' }}
-                className="gatewayapi-console-plugin__topology"
+              /* Topology view with explicit height and sidebar */
+              <TopologySideBar
+                isExpanded={isSidebarOpen}
+                onClose={handleSidebarClose}
+                selectedElement={selectedElement}
               >
-                <VisualizationProvider controller={controller}>
-                  <VisualizationSurface state={{ selectedIds }} />
-                </VisualizationProvider>
-              </TopologyView>
+                <TopologyView
+                  style={{ height: '70vh' }}
+                  className="gatewayapi-console-plugin__topology"
+                >
+                  <VisualizationProvider controller={controller}>
+                    <VisualizationSurface state={{ selectedIds }} />
+                  </VisualizationProvider>
+                </TopologyView>
+              </TopologySideBar>
             )}
           </CardBody>
         </Card>
