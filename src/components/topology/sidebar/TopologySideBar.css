@@ -1,5 +1,16 @@
 /* Topology Sidebar Styles */
 
+/* Close button positioning - matches console pattern */
+.co-sidebar-dismiss {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--pf-v6-global--spacer--sm) var(--pf-v6-global--spacer--md);
+}
+
+.co-sidebar-dismiss__close-button {
+  padding: var(--pf-v6-global--spacer--xs);
+}
+
 /* Tab section wrapper - adds horizontal padding like console */
 .gatewayapi-console-plugin__sidebar-tabsection {
   padding: 0 20px;
@@ -16,6 +27,28 @@
 .gatewayapi-console-plugin__sidebar-details .pf-v6-c-label {
   margin-right: var(--pf-v6-global--spacer--xs);
   margin-bottom: var(--pf-v6-global--spacer--xs);
+}
+
+/* YAML Viewer */
+.gatewayapi-console-plugin__yaml-viewer {
+  height: 100%;
+  min-height: 600px;
+}
+
+.gatewayapi-console-plugin__yaml-viewer .co-file-dropzone {
+  height: 100%;
+}
+
+.gatewayapi-console-plugin__yaml-viewer .ocs-yaml-editor {
+  height: 100%;
+  min-height: 600px;
+}
+
+/* Hide the sidebar toggle button in YAML viewer */
+.gatewayapi-console-plugin__yaml-viewer .pf-v6-c-code-editor__controls button[aria-label*="sidebar"],
+.gatewayapi-console-plugin__yaml-viewer .pf-v6-c-code-editor__controls button[aria-label*="Sidebar"],
+.gatewayapi-console-plugin__yaml-viewer .co-toggle-sidebar-button {
+  display: none;
 }
 
 /* Dark theme support */

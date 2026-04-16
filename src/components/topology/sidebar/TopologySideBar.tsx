@@ -2,26 +2,21 @@
 
 import * as React from 'react';
 import {
-  Drawer,
-  DrawerContent,
-  DrawerContentBody,
   DrawerPanelContent,
-  DrawerHead,
-  DrawerActions,
-  DrawerCloseButton,
-  DrawerPanelBody,
   Tabs,
   Tab,
   TabTitleText,
+  Button,
 } from '@patternfly/react-core';
+import { TimesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { GraphElement } from '@patternfly/react-topology';
-import { ResourceYAMLEditor } from '@openshift-console/dynamic-plugin-sdk';
+import { GraphElement, TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
 import { GatewayClassDetails } from './GatewayClassDetails';
 import { GatewayDetails } from './GatewayDetails';
 import { HTTPRouteDetails } from './HTTPRouteDetails';
 import { ServiceDetails } from './ServiceDetails';
 import { ListenerDetails } from './ListenerDetails';
+import { YAMLViewer } from './YAMLViewer';
 import { GatewayClass, Gateway, HTTPRoute, Service } from '../../../types/gateway-api';
 import {
   TYPE_GATEWAY_CLASS,
@@ -34,17 +29,13 @@ import {
 import './TopologySideBar.css';
 
 interface TopologySideBarProps {
-  isExpanded: boolean;
   onClose: () => void;
   selectedElement: GraphElement | null;
-  children: React.ReactNode;
 }
 
 export const TopologySideBar: React.FC<TopologySideBarProps> = ({
-  isExpanded,
   onClose,
   selectedElement,
-  children,
 }) => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
@@ -112,50 +103,45 @@ export const TopologySideBar: React.FC<TopologySideBarProps> = ({
       return null;
     }
 
-    return (
-      <ResourceYAMLEditor
-        initialResource={resource}
-        readOnly
-        hideHeader
-      />
-    );
+    return <YAMLViewer resource={resource} />;
   };
 
-  const panelContent = (
-    <DrawerPanelContent>
-      <DrawerHead>
-        <DrawerActions>
-          <DrawerCloseButton onClick={onClose} />
-        </DrawerActions>
-      </DrawerHead>
-      <DrawerPanelBody>
-        <div className="overview__sidebar-pane resource-overview">
-          <Tabs
-            activeKey={activeTabKey}
-            onSelect={(_event, tabIndex) => setActiveTabKey(tabIndex)}
-            className="pf-v6-u-mb-md"
-            inset={{ default: 'insetSm' }}
-            unmountOnExit
-          >
-            <Tab eventKey={0} title={<TabTitleText>{t('Details')}</TabTitleText>}>
-              <div className="gatewayapi-console-plugin__sidebar-tabsection">
-                {renderDetails()}
-              </div>
-            </Tab>
-            <Tab eventKey={1} title={<TabTitleText>{t('YAML')}</TabTitleText>}>
-              {renderYAML()}
-            </Tab>
-          </Tabs>
-        </div>
-      </DrawerPanelBody>
-    </DrawerPanelContent>
-  );
-
   return (
-    <Drawer isExpanded={isExpanded} isInline>
-      <DrawerContent panelContent={panelContent}>
-        <DrawerContentBody>{children}</DrawerContentBody>
-      </DrawerContent>
-    </Drawer>
+    <DrawerPanelContent isResizable minSize="400px" defaultSize="500px">
+      <PFTopologySideBar resizable className="pf-topology-side-bar-resizable">
+        <div className="pf-topology-side-bar__body">
+          <div className="co-sidebar-dismiss">
+            <Button
+              variant="plain"
+              onClick={onClose}
+              aria-label={t('Close')}
+              className="co-sidebar-dismiss__close-button"
+            >
+              <TimesIcon />
+            </Button>
+          </div>
+          <div className="overview__sidebar-pane resource-overview">
+            <Tabs
+              activeKey={activeTabKey}
+              onSelect={(_event, tabIndex) => setActiveTabKey(tabIndex)}
+              className="pf-v6-u-mb-md"
+              inset={{ default: 'insetSm' }}
+              unmountOnExit
+            >
+              <Tab eventKey={0} title={<TabTitleText>{t('Details')}</TabTitleText>}>
+                <div className="gatewayapi-console-plugin__sidebar-tabsection">
+                  {renderDetails()}
+                </div>
+              </Tab>
+              <Tab eventKey={1} title={<TabTitleText>{t('YAML')}</TabTitleText>}>
+                <React.Suspense fallback={<div>{t('Loading...')}</div>}>
+                  {renderYAML()}
+                </React.Suspense>
+              </Tab>
+            </Tabs>
+          </div>
+        </div>
+      </PFTopologySideBar>
+    </DrawerPanelContent>
   );
 };

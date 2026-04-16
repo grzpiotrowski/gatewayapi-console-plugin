@@ -16,6 +16,9 @@ import {
   Card,
   CardTitle,
   CardBody,
+  Drawer,
+  DrawerContent,
+  DrawerContentBody,
 } from '@patternfly/react-core';
 import {
   Visualization,
@@ -206,21 +209,28 @@ const GatewayTopologyPage: React.FC = () => {
                 </EmptyStateBody>
               </EmptyState>
             ) : (
-              /* Topology view with explicit height and sidebar */
-              <TopologySideBar
-                isExpanded={isSidebarOpen}
-                onClose={handleSidebarClose}
-                selectedElement={selectedElement}
-              >
-                <TopologyView
-                  style={{ height: '70vh' }}
-                  className="gatewayapi-console-plugin__topology"
+              /* Topology view with drawer sidebar */
+              <Drawer isExpanded={isSidebarOpen} isInline>
+                <DrawerContent
+                  panelContent={
+                    <TopologySideBar
+                      onClose={handleSidebarClose}
+                      selectedElement={selectedElement}
+                    />
+                  }
                 >
-                  <VisualizationProvider controller={controller}>
-                    <VisualizationSurface state={{ selectedIds }} />
-                  </VisualizationProvider>
-                </TopologyView>
-              </TopologySideBar>
+                  <DrawerContentBody>
+                    <TopologyView
+                      style={{ height: '70vh' }}
+                      className="gatewayapi-console-plugin__topology"
+                    >
+                      <VisualizationProvider controller={controller}>
+                        <VisualizationSurface state={{ selectedIds }} />
+                      </VisualizationProvider>
+                    </TopologyView>
+                  </DrawerContentBody>
+                </DrawerContent>
+              </Drawer>
             )}
           </CardBody>
         </Card>
