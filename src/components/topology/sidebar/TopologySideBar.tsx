@@ -10,9 +10,13 @@ import {
   DrawerActions,
   DrawerCloseButton,
   DrawerPanelBody,
+  Tabs,
+  Tab,
+  TabTitleText,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { GraphElement } from '@patternfly/react-topology';
+import { ResourceYAMLEditor } from '@openshift-console/dynamic-plugin-sdk';
 import { GatewayClassDetails } from './GatewayClassDetails';
 import { GatewayDetails } from './GatewayDetails';
 import { HTTPRouteDetails } from './HTTPRouteDetails';
@@ -43,6 +47,14 @@ export const TopologySideBar: React.FC<TopologySideBarProps> = ({
   children,
 }) => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
+  const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
+
+  // Reset to Details tab when a new element is selected
+  React.useEffect(() => {
+    if (selectedElement) {
+      setActiveTabKey(0);
+    }
+  }, [selectedElement]);
 
   const renderDetails = () => {
     if (!selectedElement) {
@@ -88,6 +100,27 @@ export const TopologySideBar: React.FC<TopologySideBarProps> = ({
     }
   };
 
+  const renderYAML = () => {
+    if (!selectedElement) {
+      return null;
+    }
+
+    const data = selectedElement.getData();
+    const resource = data?.resource;
+
+    if (!resource) {
+      return null;
+    }
+
+    return (
+      <ResourceYAMLEditor
+        initialResource={resource}
+        readOnly
+        hideHeader
+      />
+    );
+  };
+
   const panelContent = (
     <DrawerPanelContent>
       <DrawerHead>
@@ -95,7 +128,26 @@ export const TopologySideBar: React.FC<TopologySideBarProps> = ({
           <DrawerCloseButton onClick={onClose} />
         </DrawerActions>
       </DrawerHead>
-      <DrawerPanelBody>{renderDetails()}</DrawerPanelBody>
+      <DrawerPanelBody>
+        <div className="overview__sidebar-pane resource-overview">
+          <Tabs
+            activeKey={activeTabKey}
+            onSelect={(_event, tabIndex) => setActiveTabKey(tabIndex)}
+            className="pf-v6-u-mb-md"
+            inset={{ default: 'insetSm' }}
+            unmountOnExit
+          >
+            <Tab eventKey={0} title={<TabTitleText>{t('Details')}</TabTitleText>}>
+              <div className="gatewayapi-console-plugin__sidebar-tabsection">
+                {renderDetails()}
+              </div>
+            </Tab>
+            <Tab eventKey={1} title={<TabTitleText>{t('YAML')}</TabTitleText>}>
+              {renderYAML()}
+            </Tab>
+          </Tabs>
+        </div>
+      </DrawerPanelBody>
     </DrawerPanelContent>
   );
 

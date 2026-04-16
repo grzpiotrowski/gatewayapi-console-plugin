@@ -1,7 +1,8 @@
 /* Topology Sidebar Styles */
 
-.gatewayapi-console-plugin__sidebar-details {
-  padding: var(--pf-v6-global--spacer--md);
+/* Tab section wrapper - adds horizontal padding like console */
+.gatewayapi-console-plugin__sidebar-tabsection {
+  padding: 0 20px;
 }
 
 .gatewayapi-console-plugin__sidebar-details .pf-v6-c-description-list {
