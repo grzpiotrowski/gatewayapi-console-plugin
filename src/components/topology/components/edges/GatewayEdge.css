@@ -1,37 +1,111 @@
-/* Gateway Edge Styles - applies to all edges in topology */
+/* Gateway Edge Styles - different colors for different connection types */
 
+/* Default edge styles */
 .gatewayapi-console-plugin__topology .pf-topology__edge__link {
-  stroke: var(--pf-v6-global-palette--black-600);
-  stroke-width: 1.5px;
-  /* stroke-dasharray removed - let EdgeStyle.solid/dashed control this */
-}
-
-.gatewayapi-console-plugin__topology .pf-topology__edge:hover .pf-topology__edge__link {
-  stroke: var(--pf-v6-global-palette--black-900);
+  stroke: var(--pf-v6-global--palette--black-600);
   stroke-width: 2px;
 }
 
-.gatewayapi-console-plugin__topology .pf-topology-connector-arrow {
-  fill: var(--pf-v6-global-palette--black-600);
+.gatewayapi-console-plugin__topology .pf-topology__edge:hover .pf-topology__edge__link {
+  stroke-width: 2.5px;
 }
 
-.gatewayapi-console-plugin__topology .pf-topology__edge:hover .pf-topology-connector-arrow {
-  fill: var(--pf-v6-global-palette--black-900);
+.gatewayapi-console-plugin__topology .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--black-600);
+}
+
+/* GatewayClass → Gateway (blue, dashed) */
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--gateway-to-class .pf-topology__edge__link {
+  stroke: var(--pf-v6-global--palette--blue-400) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--gateway-to-class .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--blue-400) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--gateway-to-class:hover .pf-topology__edge__link {
+  stroke: var(--pf-v6-global--palette--blue-500) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--gateway-to-class:hover .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--blue-500) !important;
+}
+
+/* Gateway → Listener (cyan) */
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--listener-to-gateway .pf-topology__edge__link {
+  stroke: var(--pf-v6-global--palette--cyan-400) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--listener-to-gateway .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--cyan-400) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--listener-to-gateway:hover .pf-topology__edge__link {
+  stroke: var(--pf-v6-global--palette--cyan-500) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--listener-to-gateway:hover .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--cyan-500) !important;
+}
+
+/* Listener → HTTPRoute (green) */
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--route-to-listener .pf-topology__edge__link {
+  stroke: var(--pf-v6-global--palette--green-500) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--route-to-listener .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--green-500) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--route-to-listener:hover .pf-topology__edge__link {
+  stroke: var(--pf-v6-global--palette--green-600) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--route-to-listener:hover .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--green-600) !important;
+}
+
+/* HTTPRoute → Service (orange) */
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--route-to-service .pf-topology__edge__link {
+  stroke: var(--pf-v6-global--palette--orange-400) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--route-to-service .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--orange-400) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--route-to-service:hover .pf-topology__edge__link {
+  stroke: var(--pf-v6-global--palette--orange-500) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--route-to-service:hover .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--orange-500) !important;
+}
+
+/* Gateway/DNSRecord edges (purple) */
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--dns-record .pf-topology__edge__link {
+  stroke: var(--pf-v6-global--palette--purple-400) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--dns-record .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--purple-400) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--dns-record:hover .pf-topology__edge__link {
+  stroke: var(--pf-v6-global--palette--purple-500) !important;
+}
+
+.gatewayapi-console-plugin__topology .gatewayapi-console-plugin__edge--dns-record:hover .pf-topology-connector-arrow {
+  fill: var(--pf-v6-global--palette--purple-500) !important;
 }
 
 /* Dark theme support */
 .pf-v6-theme-dark .gatewayapi-console-plugin__topology .pf-topology__edge__link {
-  stroke: var(--pf-v6-global-palette--black-300);
-}
-
-.pf-v6-theme-dark .gatewayapi-console-plugin__topology .pf-topology__edge:hover .pf-topology__edge__link {
-  stroke: var(--pf-v6-global-palette--black-100);
+  stroke: var(--pf-v6-global--palette--black-300);
 }
 
 .pf-v6-theme-dark .gatewayapi-console-plugin__topology .pf-topology-connector-arrow {
-  fill: var(--pf-v6-global-palette--black-300);
+  fill: var(--pf-v6-global--palette--black-300);
 }
 
-.pf-v6-theme-dark .gatewayapi-console-plugin__topology .pf-topology__edge:hover .pf-topology-connector-arrow {
-  fill: var(--pf-v6-global-palette--black-100);
-}
+/* Dark theme - specific edge colors remain the same (PatternFly colors are theme-aware) */

@@ -28,9 +28,9 @@ export const NODE_PADDING = [0, 20];
 export const LAYOUT_CONFIG = {
   DAGRE: {
     rankdir: 'TB', // Top to bottom
-    nodesep: 60,
-    ranksep: 100,
-    edgesep: 40,
+    nodesep: 150, // Increased horizontal spacing between nodes at same rank
+    ranksep: 120, // Increased vertical spacing between ranks
+    edgesep: 50,
     marginx: 50,
     marginy: 50,
   },

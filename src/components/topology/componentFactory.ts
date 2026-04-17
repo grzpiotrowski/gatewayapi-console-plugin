@@ -6,7 +6,6 @@ import {
   ModelKind,
   withPanZoom,
   withSelection,
-  DefaultEdge,
 } from '@patternfly/react-topology';
 import {
   TYPE_GATEWAY_CLASS,
@@ -27,6 +26,13 @@ import ListenerNode from './components/nodes/ListenerNode';
 import HTTPRouteNode from './components/nodes/HTTPRouteNode';
 import ServiceNode from './components/nodes/ServiceNode';
 import DNSRecordNode from './components/nodes/DNSRecordNode';
+import {
+  GatewayToClassEdge,
+  ListenerToGatewayEdge,
+  RouteToListenerEdge,
+  RouteToServiceEdge,
+  DNSRecordEdge,
+} from './components/edges/GatewayEdge';
 
 /**
  * Component factory for Gateway API topology
@@ -53,13 +59,21 @@ export const componentFactory: ComponentFactory = (kind, type) => {
     case TYPE_DNS_RECORD:
       return withSelection({ controlled: true })(DNSRecordNode as any);
 
-    // Edge types - use DefaultEdge with selection HOC
+    // Edge types - use custom colored edges with selection HOC
     case TYPE_GATEWAY_TO_CLASS:
+      return withSelection()(GatewayToClassEdge as any);
+
     case TYPE_LISTENER_TO_GATEWAY:
+      return withSelection()(ListenerToGatewayEdge as any);
+
     case TYPE_ROUTE_TO_LISTENER:
+      return withSelection()(RouteToListenerEdge as any);
+
     case TYPE_ROUTE_TO_SERVICE:
+      return withSelection()(RouteToServiceEdge as any);
+
     case TYPE_GATEWAY_TO_DNS_RECORD:
-      return withSelection()(DefaultEdge);
+      return withSelection()(DNSRecordEdge as any);
 
     default:
       switch (kind) {
