@@ -31,11 +31,13 @@ import './TopologySideBar.css';
 interface TopologySideBarProps {
   onClose: () => void;
   selectedElement: GraphElement | null;
+  selectedResource: any;
 }
 
 export const TopologySideBar: React.FC<TopologySideBarProps> = ({
   onClose,
   selectedElement,
+  selectedResource,
 }) => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
@@ -92,18 +94,18 @@ export const TopologySideBar: React.FC<TopologySideBarProps> = ({
   };
 
   const renderYAML = () => {
-    if (!selectedElement) {
+    if (!selectedElement || !selectedResource) {
       return null;
     }
 
     const data = selectedElement.getData();
-    const resource = data?.resource;
+    const resourceKind = data?.resourceKind;
 
-    if (!resource) {
+    if (!resourceKind) {
       return null;
     }
 
-    return <YAMLViewer resource={resource} />;
+    return <YAMLViewer resource={selectedResource} resourceKind={resourceKind} />;
   };
 
   return (

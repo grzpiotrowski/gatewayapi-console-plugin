@@ -33,6 +33,7 @@
     "@patternfly/react-icons": "^6.2.2",
     "@patternfly/react-table": "^6.2.2",
     "@patternfly/react-topology": "^6.0.0",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.0.0",
     "@types/react": "^17.0.37",
     "babel-loader": "^10.1.0",
@@ -84,5 +85,8 @@
       "@console/pluginAPI": ">=4.22.0-0"
     }
   },
-  "packageManager": "yarn@4.13.0"
+  "packageManager": "yarn@4.13.0",
+  "dependencies": {
+    "js-yaml": "^4.1.1"
+  }
 }

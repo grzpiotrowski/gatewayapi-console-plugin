@@ -53,6 +53,7 @@ const GatewayTopologyPage: React.FC = () => {
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
   const [selectedElement, setSelectedElement] = React.useState<GraphElement | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState<boolean>(false);
+  const [selectedResource, setSelectedResource] = React.useState<any>(null);
 
   // Update selected namespaces when active namespace changes
   React.useEffect(() => {
@@ -136,10 +137,13 @@ const GatewayTopologyPage: React.FC = () => {
         const element = controller.getElementById(ids[0]);
         if (element) {
           setSelectedElement(element);
+          const data = element.getData();
+          setSelectedResource(data?.resource || null);
           setIsSidebarOpen(true);
         }
       } else {
         setSelectedElement(null);
+        setSelectedResource(null);
         setIsSidebarOpen(false);
       }
     };
@@ -149,11 +153,26 @@ const GatewayTopologyPage: React.FC = () => {
     };
   }, [controller]);
 
+  // Update selected resource when model changes (for resource updates from watch)
+  // Don't update selectedElement to avoid triggering tab reset
+  React.useEffect(() => {
+    if (selectedIds.length > 0 && loaded) {
+      const element = controller.getElementById(selectedIds[0]);
+      if (element) {
+        // Only update the resource data, not the element reference
+        // This allows YAML to refresh without resetting the active tab
+        const data = element.getData();
+        setSelectedResource(data?.resource || null);
+      }
+    }
+  }, [controller, model, loaded, selectedIds]);
+
   // Handle sidebar close
   const handleSidebarClose = React.useCallback(() => {
     setIsSidebarOpen(false);
     setSelectedIds([]);
     setSelectedElement(null);
+    setSelectedResource(null);
   }, []);
 
   // Render
@@ -216,6 +235,7 @@ const GatewayTopologyPage: React.FC = () => {
                     <TopologySideBar
                       onClose={handleSidebarClose}
                       selectedElement={selectedElement}
+                      selectedResource={selectedResource}
                     />
                   }
                 >
