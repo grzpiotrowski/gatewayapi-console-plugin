@@ -1,11 +1,18 @@
-/* HTTPRoute Node Styling */
-
-.gatewayapi-console-plugin__node--httproute {
-  fill: var(--pf-v6-global--palette--green-100);
-  stroke: var(--pf-v6-global--palette--green-500);
+.gatewayapi-console-plugin__node--httproute .pf-topology__node__background {
+  fill: #3e8635 !important;
+  stroke: #3e8635 !important;
+  stroke-width: 2px;
 }
 
-.gatewayapi-console-plugin__node--httproute:hover {
-  fill: var(--pf-v6-global--palette--green-200);
-  stroke: var(--pf-v6-global--palette--green-600);
+.gatewayapi-console-plugin__node--httproute:hover .pf-topology__node__background {
+  fill: #2d6324 !important;
+}
+
+.gatewayapi-console-plugin__node--httproute.pf-m-selected .pf-topology__node__background {
+  stroke: #1e4219 !important;
+  stroke-width: 3px;
+}
+
+.gatewayapi-console-plugin__node--httproute .pf-topology__node__label__badge text {
+  fill: white !important;
 }

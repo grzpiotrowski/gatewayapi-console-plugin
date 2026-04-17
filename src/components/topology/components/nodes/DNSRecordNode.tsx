@@ -31,12 +31,9 @@ const DNSRecordNode: React.FC<NodeProps> = ({ element, selected, ...rest }) => {
     return null;
   }
 
-  // Truncate DNS name if not selected or hovering (keep first 30 chars)
   const fullLabel = element.getLabel() || '';
   const shouldTruncate = !selected && !hover && fullLabel.length > 30;
-  const truncatedLabel = shouldTruncate
-    ? `${fullLabel.substring(0, 30)}...`
-    : fullLabel;
+  const truncatedLabel = shouldTruncate ? `${fullLabel.substring(0, 30)}...` : fullLabel;
 
   return (
     <Layer id={hover ? TOP_LAYER : DEFAULT_LAYER}>
@@ -44,7 +41,7 @@ const DNSRecordNode: React.FC<NodeProps> = ({ element, selected, ...rest }) => {
         <DefaultNode
           element={element as Node}
           badge={t('DNS')}
-          badgeColor="#6A6E73"
+          badgeColor="#8476d1"
           badgeClassName={`${CSS_PREFIX}__node-badge`}
           className={`${CSS_PREFIX}__node ${CSS_PREFIX}__node--dns-record`}
           label={truncatedLabel}

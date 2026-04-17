@@ -1,11 +1,18 @@
-/* Service Node Styling */
-
-.gatewayapi-console-plugin__node--service {
-  fill: var(--pf-v6-global--palette--orange-100);
-  stroke: var(--pf-v6-global--palette--orange-500);
+.gatewayapi-console-plugin__node--service .pf-topology__node__background {
+  fill: #ec7a08 !important;
+  stroke: #ec7a08 !important;
+  stroke-width: 2px;
 }
 
-.gatewayapi-console-plugin__node--service:hover {
-  fill: var(--pf-v6-global--palette--orange-200);
-  stroke: var(--pf-v6-global--palette--orange-600);
+.gatewayapi-console-plugin__node--service:hover .pf-topology__node__background {
+  fill: #c35c00 !important;
+}
+
+.gatewayapi-console-plugin__node--service.pf-m-selected .pf-topology__node__background {
+  stroke: #8f4700 !important;
+  stroke-width: 3px;
+}
+
+.gatewayapi-console-plugin__node--service .pf-topology__node__label__badge text {
+  fill: white !important;
 }

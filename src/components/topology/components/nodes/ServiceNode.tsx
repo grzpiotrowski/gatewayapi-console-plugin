@@ -40,9 +40,7 @@ const ServiceNode: React.FC<NodeProps> = ({ element, ...rest }) => {
           badgeColor="#EC7A08"
           badgeClassName={`${CSS_PREFIX}__node-badge`}
           className={`${CSS_PREFIX}__node ${CSS_PREFIX}__node--service`}
-          secondaryLabel={
-            portCount > 0 ? `${portCount} ${portCount === 1 ? 'port' : 'ports'}` : undefined
-          }
+          secondaryLabel={portCount > 0 ? `${portCount} ${portCount === 1 ? 'port' : 'ports'}` : undefined}
           {...rest}
         />
       </g>

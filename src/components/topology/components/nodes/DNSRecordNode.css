@@ -1,11 +1,18 @@
-/* DNSRecord Node Styling */
-
-.gatewayapi-console-plugin__node--dns-record {
-  fill: var(--pf-v6-global--palette--purple-100);
-  stroke: var(--pf-v6-global--palette--purple-500);
+.gatewayapi-console-plugin__node--dns-record .pf-topology__node__background {
+  fill: #8476d1 !important;
+  stroke: #8476d1 !important;
+  stroke-width: 2px;
 }
 
-.gatewayapi-console-plugin__node--dns-record:hover {
-  fill: var(--pf-v6-global--palette--purple-200);
-  stroke: var(--pf-v6-global--palette--purple-600);
+.gatewayapi-console-plugin__node--dns-record:hover .pf-topology__node__background {
+  fill: #6856b3 !important;
+}
+
+.gatewayapi-console-plugin__node--dns-record.pf-m-selected .pf-topology__node__background {
+  stroke: #513f8c !important;
+  stroke-width: 3px;
+}
+
+.gatewayapi-console-plugin__node--dns-record .pf-topology__node__label__badge text {
+  fill: white !important;
 }

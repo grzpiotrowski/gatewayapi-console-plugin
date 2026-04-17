@@ -30,7 +30,6 @@ const ListenerNode: React.FC<NodeProps> = ({ element, ...rest }) => {
     return null;
   }
 
-  // Format secondary label with protocol and port
   const secondaryLabel = `${listener.protocol}:${listener.port}`;
 
   return (

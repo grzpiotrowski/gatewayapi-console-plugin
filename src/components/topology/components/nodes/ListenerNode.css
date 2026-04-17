@@ -1,27 +1,18 @@
-/* Listener Node Styles */
-
 .gatewayapi-console-plugin__node--listener .pf-topology__node__background {
-  fill: var(--pf-v6-global--palette--cyan-50);
-  stroke: var(--pf-v6-global--palette--cyan-400);
-  stroke-width: 2;
+  fill: #009596 !important;
+  stroke: #009596 !important;
+  stroke-width: 2px;
 }
 
 .gatewayapi-console-plugin__node--listener:hover .pf-topology__node__background {
-  fill: var(--pf-v6-global--palette--cyan-100);
-  stroke: var(--pf-v6-global--palette--cyan-500);
-  stroke-width: 2.5;
+  fill: #007273 !important;
 }
 
-/* Dark theme support */
-.pf-v6-theme-dark .gatewayapi-console-plugin__node--listener .pf-topology__node__background,
-.pf-theme-dark .gatewayapi-console-plugin__node--listener .pf-topology__node__background {
-  fill: var(--pf-v6-global--palette--cyan-400);
-  fill-opacity: 0.2;
-  stroke: var(--pf-v6-global--palette--cyan-300);
+.gatewayapi-console-plugin__node--listener.pf-m-selected .pf-topology__node__background {
+  stroke: #005455 !important;
+  stroke-width: 3px;
 }
 
-.pf-v6-theme-dark .gatewayapi-console-plugin__node--listener:hover .pf-topology__node__background,
-.pf-theme-dark .gatewayapi-console-plugin__node--listener:hover .pf-topology__node__background {
-  fill-opacity: 0.3;
-  stroke: var(--pf-v6-global--palette--cyan-200);
+.gatewayapi-console-plugin__node--listener .pf-topology__node__label__badge text {
+  fill: white !important;
 }

@@ -1,30 +1,18 @@
-/* GatewayClass Node Styles */
-
 .gatewayapi-console-plugin__node--gateway-class .pf-topology__node__background {
-  fill: var(--pf-v6-global-palette--purple-100);
-  stroke: var(--pf-v6-global-palette--purple-500);
+  fill: #8461c9 !important;
+  stroke: #8461c9 !important;
   stroke-width: 2px;
 }
 
 .gatewayapi-console-plugin__node--gateway-class:hover .pf-topology__node__background {
-  fill: var(--pf-v6-global-palette--purple-200);
-  stroke: var(--pf-v6-global-palette--purple-600);
+  fill: #6941a6 !important;
 }
 
 .gatewayapi-console-plugin__node--gateway-class.pf-m-selected .pf-topology__node__background {
-  stroke: var(--pf-v6-global-palette--purple-700);
+  stroke: #4f2f7f !important;
   stroke-width: 3px;
 }
 
-/* Status-based border colors */
-.gatewayapi-console-plugin__node--gateway-class[data-status="success"] .pf-topology__node__background {
-  stroke: var(--pf-v6-global-palette--green-500);
-}
-
-.gatewayapi-console-plugin__node--gateway-class[data-status="warning"] .pf-topology__node__background {
-  stroke: var(--pf-v6-global-palette--gold-500);
-}
-
-.gatewayapi-console-plugin__node--gateway-class[data-status="danger"] .pf-topology__node__background {
-  stroke: var(--pf-v6-global-palette--red-500);
+.gatewayapi-console-plugin__node--gateway-class .pf-topology__node__label__badge text {
+  fill: white !important;
 }

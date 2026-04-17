@@ -25,6 +25,7 @@ const GatewayNode: React.FC<NodeProps> = ({ element, ...rest }) => {
   const [hover, hoverRef] = useHover();
   const data = element.getData();
   const gateway = data?.resource as Gateway;
+  const listenerCount = gateway?.spec?.listeners?.length || 0;
 
   if (!gateway) {
     return null;
@@ -40,6 +41,7 @@ const GatewayNode: React.FC<NodeProps> = ({ element, ...rest }) => {
           badgeColor="#0066CC"
           badgeClassName={`${CSS_PREFIX}__node-badge`}
           className={`${CSS_PREFIX}__node ${CSS_PREFIX}__node--gateway`}
+          secondaryLabel={listenerCount > 0 ? `${listenerCount} ${listenerCount === 1 ? 'listener' : 'listeners'}` : undefined}
           {...rest}
         />
       </g>
