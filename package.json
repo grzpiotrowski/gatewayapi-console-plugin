@@ -79,7 +79,10 @@
     "description": "OpenShift Console plugin for visualizing Gateway API resources in a topology view",
     "exposedModules": {
       "ExamplePage": "./components/ExamplePage",
-      "GatewayTopologyPage": "./components/GatewayTopologyPage"
+      "GatewayTopologyPage": "./components/GatewayTopologyPage",
+      "CreateGatewayClassPage": "./components/CreateGatewayClassPage",
+      "CreateGatewayPage": "./components/CreateGatewayPage",
+      "CreateHTTPRoutePage": "./components/CreateHTTPRoutePage"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.22.0-0"

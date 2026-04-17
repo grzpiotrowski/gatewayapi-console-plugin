@@ -9,28 +9,53 @@ import {
   Title,
   Content,
   Label,
+  Button,
+  ButtonVariant,
 } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Gateway } from '../../../types/gateway-api';
+import { createHTTPRouteTemplateForGateway } from '../../../utils/template-generators';
 
 interface GatewayDetailsProps {
   gateway: Gateway;
+  onCreateResource?: (template: any, resourceKind: string) => void;
 }
 
-export const GatewayDetails: React.FC<GatewayDetailsProps> = ({ gateway }) => {
+export const GatewayDetails: React.FC<GatewayDetailsProps> = ({ gateway, onCreateResource }) => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
 
   const acceptedCondition = gateway.status?.conditions?.find((c) => c.type === 'Accepted');
   const programmedCondition = gateway.status?.conditions?.find((c) => c.type === 'Programmed');
 
+  const handleCreateHTTPRoute = React.useCallback(() => {
+    if (onCreateResource) {
+      const template = createHTTPRouteTemplateForGateway(gateway);
+      onCreateResource(template, 'HTTPRoute');
+    }
+  }, [onCreateResource, gateway]);
+
   return (
     <div className="gatewayapi-console-plugin__sidebar-details">
-      <Title headingLevel="h2" size="lg">
-        {gateway.metadata?.name}
-      </Title>
-      <Content component="small">
-        {t('Gateway')} • {gateway.metadata?.namespace}
-      </Content>
+      <div className="pf-v6-u-display-flex pf-v6-u-justify-content-space-between pf-v6-u-align-items-center">
+        <div>
+          <Title headingLevel="h2" size="lg">
+            {gateway.metadata?.name}
+          </Title>
+          <Content component="small">
+            {t('Gateway')} • {gateway.metadata?.namespace}
+          </Content>
+        </div>
+        {onCreateResource && (
+          <Button
+            variant={ButtonVariant.secondary}
+            icon={<PlusCircleIcon />}
+            onClick={handleCreateHTTPRoute}
+          >
+            {t('Create HTTPRoute')}
+          </Button>
+        )}
+      </div>
 
       <DescriptionList className="pf-u-mt-md">
         <DescriptionListGroup>

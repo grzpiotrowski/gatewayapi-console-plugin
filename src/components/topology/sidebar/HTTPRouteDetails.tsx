@@ -9,28 +9,56 @@ import {
   Title,
   Content,
   Label,
+  Button,
+  ButtonVariant,
 } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { HTTPRoute } from '../../../types/gateway-api';
+import { createServiceTemplateForHTTPRoute } from '../../../utils/template-generators';
 
 interface HTTPRouteDetailsProps {
   httpRoute: HTTPRoute;
+  onCreateResource?: (template: any, resourceKind: string) => void;
 }
 
-export const HTTPRouteDetails: React.FC<HTTPRouteDetailsProps> = ({ httpRoute }) => {
+export const HTTPRouteDetails: React.FC<HTTPRouteDetailsProps> = ({
+  httpRoute,
+  onCreateResource,
+}) => {
   const { t } = useTranslation('plugin__gatewayapi-console-plugin');
 
   const parentStatus = httpRoute.status?.parents?.[0];
   const acceptedCondition = parentStatus?.conditions?.find((c) => c.type === 'Accepted');
 
+  const handleCreateService = React.useCallback(() => {
+    if (onCreateResource) {
+      const template = createServiceTemplateForHTTPRoute(httpRoute);
+      onCreateResource(template, 'Service');
+    }
+  }, [onCreateResource, httpRoute]);
+
   return (
     <div className="gatewayapi-console-plugin__sidebar-details">
-      <Title headingLevel="h2" size="lg">
-        {httpRoute.metadata?.name}
-      </Title>
-      <Content component="small">
-        {t('HTTPRoute')} • {httpRoute.metadata?.namespace}
-      </Content>
+      <div className="pf-v6-u-display-flex pf-v6-u-justify-content-space-between pf-v6-u-align-items-center">
+        <div>
+          <Title headingLevel="h2" size="lg">
+            {httpRoute.metadata?.name}
+          </Title>
+          <Content component="small">
+            {t('HTTPRoute')} • {httpRoute.metadata?.namespace}
+          </Content>
+        </div>
+        {onCreateResource && (
+          <Button
+            variant={ButtonVariant.secondary}
+            icon={<PlusCircleIcon />}
+            onClick={handleCreateService}
+          >
+            {t('Create Service')}
+          </Button>
+        )}
+      </div>
 
       <DescriptionList className="pf-u-mt-md">
         {httpRoute.spec?.hostnames && httpRoute.spec.hostnames.length > 0 && (

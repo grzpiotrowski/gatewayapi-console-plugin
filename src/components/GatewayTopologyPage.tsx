@@ -30,7 +30,10 @@ import {
   SelectionEventListener,
   GraphElement,
 } from '@patternfly/react-topology';
-import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  useActiveNamespace,
+  ListPageCreateDropdown,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { useGatewayTopologyModel } from '../hooks/useGatewayTopologyModel';
 import { componentFactory } from './topology/componentFactory';
 import { layoutFactory, LAYOUT_TYPE_DAGRE } from './topology/layoutFactory';
@@ -54,6 +57,13 @@ const GatewayTopologyPage: React.FC = () => {
   const [selectedElement, setSelectedElement] = React.useState<GraphElement | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState<boolean>(false);
   const [selectedResource, setSelectedResource] = React.useState<any>(null);
+  const [creationContext, setCreationContext] = React.useState<
+    | {
+        template: any;
+        resourceKind: string;
+      }
+    | undefined
+  >(undefined);
 
   // Update selected namespaces when active namespace changes
   React.useEffect(() => {
@@ -173,6 +183,46 @@ const GatewayTopologyPage: React.FC = () => {
     setSelectedIds([]);
     setSelectedElement(null);
     setSelectedResource(null);
+    setCreationContext(undefined);
+  }, []);
+
+  // Handle create resource request from detail components
+  const handleCreateResource = React.useCallback((template: any, resourceKind: string) => {
+    console.log('[GatewayTopology] Creating resource:', resourceKind, template);
+    setCreationContext({ template, resourceKind });
+    // Keep sidebar open in creation mode
+    setIsSidebarOpen(true);
+  }, []);
+
+  // Handle successful resource creation
+  const handleCreationSuccess = React.useCallback(
+    (resource: any) => {
+      console.log('[GatewayTopology] Resource created successfully:', resource);
+      // Exit creation mode
+      setCreationContext(undefined);
+
+      // The model will automatically update via watch
+      // After a short delay, try to select the new resource
+      setTimeout(() => {
+        const resourceId = `${resource.kind.toLowerCase()}-${resource.metadata?.namespace || 'cluster'}-${resource.metadata?.name}`;
+        const element = controller.getElementById(resourceId);
+        if (element) {
+          // Select the element
+          setSelectedIds([resourceId]);
+          setSelectedElement(element);
+          const data = element.getData();
+          setSelectedResource(data?.resource || null);
+        }
+      }, 1000);
+    },
+    [controller],
+  );
+
+  // Handle creation cancellation
+  const handleCreationCancel = React.useCallback(() => {
+    console.log('[GatewayTopology] Creation cancelled');
+    setCreationContext(undefined);
+    // Optionally close sidebar or return to viewing selected element
   }, []);
 
   // Render
@@ -183,7 +233,7 @@ const GatewayTopologyPage: React.FC = () => {
         <Card>
           <CardTitle>{t('Topology View')}</CardTitle>
           <CardBody>
-            {/* Toolbar with namespace selector */}
+            {/* Toolbar with namespace selector and create button */}
             <Toolbar>
               <ToolbarContent>
                 <ToolbarItem>
@@ -191,6 +241,45 @@ const GatewayTopologyPage: React.FC = () => {
                     selectedNamespaces={selectedNamespaces}
                     onSelectionChange={setSelectedNamespaces}
                   />
+                </ToolbarItem>
+                <ToolbarItem align={{ default: 'alignEnd' }}>
+                  <ListPageCreateDropdown
+                    items={{
+                      gatewayclass: t('Create GatewayClass'),
+                      gateway: t('Create Gateway'),
+                      httproute: t('Create HTTPRoute'),
+                    }}
+                    createAccessReview={{
+                      groupVersionKind: {
+                        group: 'gateway.networking.k8s.io',
+                        version: 'v1',
+                        kind: 'Gateway',
+                      },
+                    }}
+                    onClick={(key) => {
+                      const basePath =
+                        selectedNamespaces.length === 1
+                          ? `/k8s/ns/${selectedNamespaces[0]}`
+                          : '/k8s/cluster';
+                      let path = '';
+                      switch (key) {
+                        case 'gatewayclass':
+                          path = `${basePath}/gateway.networking.k8s.io~v1~GatewayClass/~new`;
+                          break;
+                        case 'gateway':
+                          path = `${basePath}/gateway.networking.k8s.io~v1~Gateway/~new`;
+                          break;
+                        case 'httproute':
+                          path = `${basePath}/gateway.networking.k8s.io~v1~HTTPRoute/~new`;
+                          break;
+                      }
+                      if (path) {
+                        window.location.href = path;
+                      }
+                    }}
+                  >
+                    {t('Create')}
+                  </ListPageCreateDropdown>
                 </ToolbarItem>
               </ToolbarContent>
             </Toolbar>
@@ -236,6 +325,10 @@ const GatewayTopologyPage: React.FC = () => {
                       onClose={handleSidebarClose}
                       selectedElement={selectedElement}
                       selectedResource={selectedResource}
+                      creationContext={creationContext}
+                      onCreationSuccess={handleCreationSuccess}
+                      onCreationCancel={handleCreationCancel}
+                      onCreateResource={handleCreateResource}
                     />
                   }
                 >

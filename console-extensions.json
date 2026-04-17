@@ -83,5 +83,38 @@
       "section": "networking",
       "insertAfter": "routes"
     }
+  },
+  {
+    "type": "console.resource/create",
+    "properties": {
+      "model": {
+        "group": "gateway.networking.k8s.io",
+        "version": "v1",
+        "kind": "GatewayClass"
+      },
+      "component": { "$codeRef": "CreateGatewayClassPage" }
+    }
+  },
+  {
+    "type": "console.resource/create",
+    "properties": {
+      "model": {
+        "group": "gateway.networking.k8s.io",
+        "version": "v1",
+        "kind": "Gateway"
+      },
+      "component": { "$codeRef": "CreateGatewayPage" }
+    }
+  },
+  {
+    "type": "console.resource/create",
+    "properties": {
+      "model": {
+        "group": "gateway.networking.k8s.io",
+        "version": "v1",
+        "kind": "HTTPRoute"
+      },
+      "component": { "$codeRef": "CreateHTTPRoutePage" }
+    }
   }
 ]
