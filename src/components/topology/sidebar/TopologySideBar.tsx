@@ -105,7 +105,22 @@ export const TopologySideBar: React.FC<TopologySideBarProps> = ({
       return null;
     }
 
-    return <YAMLViewer resource={selectedResource} resourceKind={resourceKind} />;
+    // For Listener nodes, pass gateway context
+    const listenerContext =
+      resourceKind === 'Listener'
+        ? {
+            gatewayName: data.gatewayName,
+            gatewayNamespace: data.gatewayNamespace,
+          }
+        : undefined;
+
+    return (
+      <YAMLViewer
+        resource={selectedResource}
+        resourceKind={resourceKind}
+        listenerContext={listenerContext}
+      />
+    );
   };
 
   return (
