@@ -295,15 +295,24 @@ export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources)
               },
             } as Service);
 
-            const edge: EdgeModel = {
-              id: `${routeId}_rule${ruleIdx}_backend${backendIdx}_to_${svcId}`,
-              type: TYPE_ROUTE_TO_SERVICE,
-              source: routeId,
-              target: svcId,
-              edgeStyle: EdgeStyle.solid,
-            };
+            // Only create edge if the service node exists
+            const serviceExists = nodes.some((n) => n.id === svcId);
 
-            edges.push(edge);
+            if (serviceExists) {
+              const edge: EdgeModel = {
+                id: `${routeId}_rule${ruleIdx}_backend${backendIdx}_to_${svcId}`,
+                type: TYPE_ROUTE_TO_SERVICE,
+                source: routeId,
+                target: svcId,
+                edgeStyle: EdgeStyle.solid,
+              };
+
+              edges.push(edge);
+            } else {
+              console.warn(
+                `[GatewayModelBuilder] Service not found: ${svcId} for HTTPRoute ${routeId}`,
+              );
+            }
           }
         });
       });

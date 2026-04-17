@@ -10,6 +10,7 @@ import {
   Content,
   Button,
   ButtonVariant,
+  Label,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -77,13 +78,29 @@ export const GatewayClassDetails: React.FC<GatewayClassDetailsProps> = ({
           <DescriptionListGroup>
             <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
             <DescriptionListDescription>
-              {acceptedCondition.status === 'True' ? t('Accepted') : t('Not Accepted')}
-              {acceptedCondition.message && (
-                <>
-                  <br />
-                  <Content component="small">{acceptedCondition.message}</Content>
-                </>
-              )}
+              <div>
+                <div className="pf-v6-u-mb-sm">
+                  <Label color={acceptedCondition.status === 'True' ? 'green' : 'red'}>
+                    {acceptedCondition.status === 'True' ? t('Accepted') : t('Not Accepted')}
+                  </Label>
+                  {acceptedCondition.message && (
+                    <>
+                      <br />
+                      <Content component="small" className="pf-v6-u-mt-xs">
+                        {acceptedCondition.message}
+                      </Content>
+                    </>
+                  )}
+                  {acceptedCondition.reason && (
+                    <>
+                      <br />
+                      <Content component="small" className="pf-v6-u-color-200">
+                        {t('Reason')}: {acceptedCondition.reason}
+                      </Content>
+                    </>
+                  )}
+                </div>
+              </div>
             </DescriptionListDescription>
           </DescriptionListGroup>
         )}

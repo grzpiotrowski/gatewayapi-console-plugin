@@ -97,37 +97,61 @@ export const GatewayDetails: React.FC<GatewayDetailsProps> = ({ gateway, onCreat
           </DescriptionListGroup>
         )}
 
-        <DescriptionListGroup>
-          <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
-          <DescriptionListDescription>
-            <div>
-              {acceptedCondition && (
-                <div className="pf-u-mb-xs">
-                  <strong>{t('Accepted')}:</strong>{' '}
-                  {acceptedCondition.status === 'True' ? t('Yes') : t('No')}
-                  {acceptedCondition.message && (
-                    <>
-                      <br />
-                      <Content component="small">{acceptedCondition.message}</Content>
-                    </>
-                  )}
-                </div>
-              )}
-              {programmedCondition && (
-                <div>
-                  <strong>{t('Programmed')}:</strong>{' '}
-                  {programmedCondition.status === 'True' ? t('Yes') : t('No')}
-                  {programmedCondition.message && (
-                    <>
-                      <br />
-                      <Content component="small">{programmedCondition.message}</Content>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </DescriptionListDescription>
-        </DescriptionListGroup>
+        {(acceptedCondition || programmedCondition) && (
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <div>
+                {acceptedCondition && (
+                  <div className="pf-v6-u-mb-sm">
+                    <Label color={acceptedCondition.status === 'True' ? 'green' : 'red'}>
+                      {acceptedCondition.status === 'True' ? t('Accepted') : t('Not Accepted')}
+                    </Label>
+                    {acceptedCondition.message && (
+                      <>
+                        <br />
+                        <Content component="small" className="pf-v6-u-mt-xs">
+                          {acceptedCondition.message}
+                        </Content>
+                      </>
+                    )}
+                    {acceptedCondition.reason && (
+                      <>
+                        <br />
+                        <Content component="small" className="pf-v6-u-color-200">
+                          {t('Reason')}: {acceptedCondition.reason}
+                        </Content>
+                      </>
+                    )}
+                  </div>
+                )}
+                {programmedCondition && (
+                  <div className="pf-v6-u-mb-sm">
+                    <Label color={programmedCondition.status === 'True' ? 'green' : 'red'}>
+                      {programmedCondition.status === 'True' ? t('Programmed') : t('Not Programmed')}
+                    </Label>
+                    {programmedCondition.message && (
+                      <>
+                        <br />
+                        <Content component="small" className="pf-v6-u-mt-xs">
+                          {programmedCondition.message}
+                        </Content>
+                      </>
+                    )}
+                    {programmedCondition.reason && (
+                      <>
+                        <br />
+                        <Content component="small" className="pf-v6-u-color-200">
+                          {t('Reason')}: {programmedCondition.reason}
+                        </Content>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+        )}
       </DescriptionList>
     </div>
   );

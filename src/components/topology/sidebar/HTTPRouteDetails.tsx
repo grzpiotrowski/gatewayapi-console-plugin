@@ -30,6 +30,7 @@ export const HTTPRouteDetails: React.FC<HTTPRouteDetailsProps> = ({
 
   const parentStatus = httpRoute.status?.parents?.[0];
   const acceptedCondition = parentStatus?.conditions?.find((c) => c.type === 'Accepted');
+  const resolvedRefsCondition = parentStatus?.conditions?.find((c) => c.type === 'ResolvedRefs');
 
   const handleCreateService = React.useCallback(() => {
     if (onCreateResource) {
@@ -131,17 +132,52 @@ export const HTTPRouteDetails: React.FC<HTTPRouteDetailsProps> = ({
           </DescriptionListGroup>
         )}
 
-        {acceptedCondition && (
+        {(acceptedCondition || resolvedRefsCondition) && (
           <DescriptionListGroup>
             <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
             <DescriptionListDescription>
-              {acceptedCondition.status === 'True' ? t('Accepted') : t('Not Accepted')}
-              {acceptedCondition.message && (
-                <>
-                  <br />
-                  <Content component="small">{acceptedCondition.message}</Content>
-                </>
-              )}
+              <div>
+                {acceptedCondition && (
+                  <div className="pf-v6-u-mb-sm">
+                    <Label color={acceptedCondition.status === 'True' ? 'green' : 'red'}>
+                      {acceptedCondition.status === 'True' ? t('Accepted') : t('Not Accepted')}
+                    </Label>
+                    {acceptedCondition.message && (
+                      <>
+                        <br />
+                        <Content component="small" className="pf-v6-u-mt-xs">
+                          {acceptedCondition.message}
+                        </Content>
+                      </>
+                    )}
+                  </div>
+                )}
+                {resolvedRefsCondition && (
+                  <div className="pf-v6-u-mb-sm">
+                    <Label color={resolvedRefsCondition.status === 'True' ? 'green' : 'orange'}>
+                      {resolvedRefsCondition.status === 'True'
+                        ? t('Refs Resolved')
+                        : t('Refs Not Resolved')}
+                    </Label>
+                    {resolvedRefsCondition.message && (
+                      <>
+                        <br />
+                        <Content component="small" className="pf-v6-u-mt-xs">
+                          {resolvedRefsCondition.message}
+                        </Content>
+                      </>
+                    )}
+                    {resolvedRefsCondition.reason && (
+                      <>
+                        <br />
+                        <Content component="small" className="pf-v6-u-color-200">
+                          {t('Reason')}: {resolvedRefsCondition.reason}
+                        </Content>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
             </DescriptionListDescription>
           </DescriptionListGroup>
         )}
