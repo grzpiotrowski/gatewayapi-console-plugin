@@ -8,7 +8,7 @@ import {
   buildGatewayTopologyModel,
   GatewayAPIWatchedResources,
 } from '../utils/gateway-model-builder';
-import { Gateway, GatewayClass, HTTPRoute, Service } from '../types/gateway-api';
+import { Gateway, GatewayClass, HTTPRoute, Service, DNSRecord } from '../types/gateway-api';
 
 /**
  * Hook to watch Gateway API resources and build the topology model
@@ -63,6 +63,16 @@ export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, b
         namespace: undefined, // Always watch all, filter client-side
         namespaced: true,
       },
+      dnsrecords: {
+        isList: true,
+        groupVersionKind: {
+          group: 'ingress.operator.openshift.io',
+          version: 'v1',
+          kind: 'DNSRecord',
+        },
+        namespace: undefined, // Always watch all, filter client-side
+        namespaced: true,
+      },
     }),
     [],
   );
@@ -73,6 +83,7 @@ export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, b
     gateways: Gateway[];
     httpRoutes: HTTPRoute[];
     services: Service[];
+    dnsrecords: DNSRecord[];
   }>(resources);
 
   // Build the model when resources change
@@ -98,6 +109,11 @@ export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, b
         error: rawWatchedResources.services.loadError,
         dataCount: rawWatchedResources.services.data?.length || 0,
       },
+      dnsrecords: {
+        loaded: rawWatchedResources.dnsrecords.loaded,
+        error: rawWatchedResources.dnsrecords.loadError,
+        dataCount: rawWatchedResources.dnsrecords.data?.length || 0,
+      },
     });
 
     const allLoaded =
@@ -105,7 +121,8 @@ export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, b
         !!rawWatchedResources.gatewayClasses.loadError) &&
       (rawWatchedResources.gateways.loaded || !!rawWatchedResources.gateways.loadError) &&
       (rawWatchedResources.httpRoutes.loaded || !!rawWatchedResources.httpRoutes.loadError) &&
-      (rawWatchedResources.services.loaded || !!rawWatchedResources.services.loadError);
+      (rawWatchedResources.services.loaded || !!rawWatchedResources.services.loadError) &&
+      (rawWatchedResources.dnsrecords.loaded || !!rawWatchedResources.dnsrecords.loadError);
 
     if (!allLoaded) {
       console.log('[useGatewayTopologyModel] Not all loaded yet');
@@ -116,7 +133,8 @@ export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, b
       rawWatchedResources.gatewayClasses.loadError ||
       rawWatchedResources.gateways.loadError ||
       rawWatchedResources.httpRoutes.loadError ||
-      rawWatchedResources.services.loadError;
+      rawWatchedResources.services.loadError ||
+      rawWatchedResources.dnsrecords.loadError;
     if (error) {
       console.error('[useGatewayTopologyModel] Load error:', error);
       return [{ nodes: [], edges: [] }, true, error];
@@ -126,6 +144,7 @@ export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, b
     const allGateways = (rawWatchedResources.gateways.data || []) as Gateway[];
     const allHTTPRoutes = (rawWatchedResources.httpRoutes.data || []) as HTTPRoute[];
     const allServices = (rawWatchedResources.services.data || []) as Service[];
+    const allDNSRecords = (rawWatchedResources.dnsrecords.data || []) as DNSRecord[];
 
     const filteredGateways = watchAllNamespaces
       ? allGateways
@@ -140,6 +159,10 @@ export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, b
     const filteredServices = watchAllNamespaces
       ? allServices
       : allServices.filter((svc) => selectedNamespaces.includes(svc.metadata?.namespace || ''));
+
+    const filteredDNSRecords = watchAllNamespaces
+      ? allDNSRecords
+      : allDNSRecords.filter((dns) => selectedNamespaces.includes(dns.metadata?.namespace || ''));
 
     // Convert WatchK8sResults to GatewayAPIWatchedResources format
     const watchedResources: GatewayAPIWatchedResources = {
@@ -162,6 +185,11 @@ export const useGatewayTopologyModel = (selectedNamespaces: string[]): [Model, b
         data: filteredServices,
         loaded: rawWatchedResources.services.loaded,
         loadError: rawWatchedResources.services.loadError,
+      },
+      dnsrecords: {
+        data: filteredDNSRecords,
+        loaded: rawWatchedResources.dnsrecords.loaded,
+        loadError: rawWatchedResources.dnsrecords.loadError,
       },
     };
 

@@ -63,6 +63,21 @@
     }
   },
   {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "ingress.operator.openshift.io",
+        "version": "v1",
+        "kind": "DNSRecord"
+      },
+      "plural": "dnsrecords",
+      "abbr": "DNS",
+      "namespaced": true,
+      "label": "%plugin__gatewayapi-console-plugin~DNSRecord%",
+      "labelPlural": "%plugin__gatewayapi-console-plugin~DNSRecords%"
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "exact": false,

@@ -17,15 +17,17 @@ import { GatewayDetails } from './GatewayDetails';
 import { HTTPRouteDetails } from './HTTPRouteDetails';
 import { ServiceDetails } from './ServiceDetails';
 import { ListenerDetails } from './ListenerDetails';
+import { DNSRecordDetails } from './DNSRecordDetails';
 import { YAMLViewer } from './YAMLViewer';
 import { CreateResourceInline } from './CreateResourceInline';
-import { GatewayClass, Gateway, HTTPRoute, Service } from '../../../types/gateway-api';
+import { GatewayClass, Gateway, HTTPRoute, Service, DNSRecord } from '../../../types/gateway-api';
 import {
   TYPE_GATEWAY_CLASS,
   TYPE_GATEWAY,
   TYPE_HTTP_ROUTE,
   TYPE_SERVICE,
   TYPE_LISTENER,
+  TYPE_DNS_RECORD,
 } from '../../../utils/gateway-constants';
 
 import './TopologySideBar.css';
@@ -113,6 +115,9 @@ export const TopologySideBar: React.FC<TopologySideBarProps> = ({
             gatewayNamespace={data.gatewayNamespace || ''}
           />
         );
+
+      case TYPE_DNS_RECORD:
+        return <DNSRecordDetails dnsRecord={resource as DNSRecord} />;
 
       default:
         return (

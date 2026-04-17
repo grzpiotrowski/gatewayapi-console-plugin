@@ -6,12 +6,14 @@ export const TYPE_GATEWAY = 'gateway';
 export const TYPE_HTTP_ROUTE = 'http-route';
 export const TYPE_LISTENER = 'listener';
 export const TYPE_SERVICE = 'service';
+export const TYPE_DNS_RECORD = 'dns-record';
 
 // Edge type constants
 export const TYPE_GATEWAY_TO_CLASS = 'gateway-to-class';
 export const TYPE_LISTENER_TO_GATEWAY = 'listener-to-gateway';
 export const TYPE_ROUTE_TO_LISTENER = 'route-to-listener';
 export const TYPE_ROUTE_TO_SERVICE = 'route-to-service';
+export const TYPE_GATEWAY_TO_DNS_RECORD = 'gateway-to-dns-record';
 
 // Node dimensions (in pixels)
 export const NODE_WIDTH = 104;

@@ -228,3 +228,30 @@ export interface Service extends K8sResourceCommon {
     };
   };
 }
+
+// DNSRecord Type (from ingress.operator.openshift.io/v1)
+
+export interface DNSZone {
+  id: string;
+}
+
+export interface DNSZoneStatus {
+  dnsZone: DNSZone;
+  conditions: Condition[];
+}
+
+export interface DNSRecord extends K8sResourceCommon {
+  apiVersion: 'ingress.operator.openshift.io/v1';
+  kind: 'DNSRecord';
+  spec: {
+    dnsManagementPolicy?: 'Managed' | 'Unmanaged';
+    dnsName: string;
+    recordTTL?: number;
+    recordType: 'A' | 'AAAA' | 'CNAME' | 'TXT';
+    targets: string[];
+  };
+  status?: {
+    observedGeneration?: number;
+    zones?: DNSZoneStatus[];
+  };
+}

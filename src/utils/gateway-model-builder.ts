@@ -1,17 +1,19 @@
 // Gateway API Topology Model Builder
 
 import { Model, NodeModel, EdgeModel, EdgeStyle } from '@patternfly/react-topology';
-import { Gateway, GatewayClass, HTTPRoute, Service } from '../types/gateway-api';
+import { Gateway, GatewayClass, HTTPRoute, Service, DNSRecord } from '../types/gateway-api';
 import {
   TYPE_GATEWAY_CLASS,
   TYPE_GATEWAY,
   TYPE_LISTENER,
   TYPE_HTTP_ROUTE,
   TYPE_SERVICE,
+  TYPE_DNS_RECORD,
   TYPE_GATEWAY_TO_CLASS,
   TYPE_LISTENER_TO_GATEWAY,
   TYPE_ROUTE_TO_LISTENER,
   TYPE_ROUTE_TO_SERVICE,
+  TYPE_GATEWAY_TO_DNS_RECORD,
   NODE_WIDTH,
   NODE_HEIGHT,
   LISTENER_NODE_WIDTH,
@@ -48,6 +50,11 @@ export interface GatewayAPIWatchedResources {
   };
   services?: {
     data: Service[];
+    loaded: boolean;
+    loadError?: any;
+  };
+  dnsrecords?: {
+    data: DNSRecord[];
     loaded: boolean;
     loadError?: any;
   };
@@ -339,6 +346,139 @@ export const buildGatewayTopologyModel = (resources: GatewayAPIWatchedResources)
         };
 
         nodes.push(node);
+      }
+    });
+  }
+
+  // 5. Create DNSRecord nodes and edges to Listeners (or Gateway as fallback)
+  if (resources.dnsrecords?.data) {
+    resources.dnsrecords.data.forEach((dnsRecord: DNSRecord) => {
+      const dnsId = `dnsrecord-${dnsRecord.metadata?.namespace}-${dnsRecord.metadata?.name}`;
+
+      const node: NodeModel = {
+        id: dnsId,
+        type: TYPE_DNS_RECORD,
+        label: getResourceLabel(dnsRecord, true), // Include namespace in label
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT,
+        data: {
+          resource: dnsRecord,
+          resourceKind: 'DNSRecord',
+          namespace: dnsRecord.metadata?.namespace,
+        },
+      };
+
+      nodes.push(node);
+
+      // Edge: Listener → DNSRecord (based on hostname match)
+      const gatewayName = dnsRecord.metadata?.labels?.['gateway.networking.k8s.io/gateway-name'];
+      const dnsName = dnsRecord.spec?.dnsName;
+
+      if (gatewayName && dnsName) {
+        // Find the Gateway
+        const gateway = resources.gateways?.data.find(
+          (gw) =>
+            gw.metadata?.name === gatewayName &&
+            gw.metadata?.namespace === dnsRecord.metadata?.namespace,
+        );
+
+        if (gateway?.spec.listeners) {
+          let edgeCreated = false;
+
+          // Normalize DNS name by removing trailing dot (FQDN notation)
+          const normalizedDnsName = dnsName.endsWith('.') ? dnsName.slice(0, -1) : dnsName;
+
+          console.log(
+            `[GatewayModelBuilder] Matching DNSRecord ${dnsId} (dnsName: ${dnsName}, normalized: ${normalizedDnsName}) to Gateway ${gatewayName} listeners`,
+          );
+
+          // Try to match DNSRecord.spec.dnsName to Listener.hostname
+          gateway.spec.listeners.forEach((listener) => {
+            const listenerHostname = listener.hostname;
+            // Normalize listener hostname too (remove trailing dot if present)
+            const normalizedListenerHostname = listenerHostname?.endsWith('.')
+              ? listenerHostname.slice(0, -1)
+              : listenerHostname;
+
+            console.log(
+              `[GatewayModelBuilder] Checking listener ${listener.name} (hostname: ${listenerHostname || 'undefined'}, normalized: ${normalizedListenerHostname || 'undefined'})`,
+            );
+
+            // Match logic:
+            // 1. No hostname specified (undefined) - listener accepts all hostnames
+            // 2. Exact match: listener.hostname === dnsRecord.spec.dnsName
+            // 3. Wildcard listener: listener.hostname === '*' matches any DNS name
+            // 4. Wildcard DNS: listener.hostname like '*.example.com' matches 'foo.example.com'
+            const isMatch =
+              !normalizedListenerHostname || // No hostname means accept all
+              normalizedListenerHostname === normalizedDnsName ||
+              normalizedListenerHostname === '*' ||
+              (normalizedListenerHostname.startsWith('*.') &&
+                normalizedDnsName.endsWith(normalizedListenerHostname.substring(1)));
+
+            console.log(`[GatewayModelBuilder] Match result: ${isMatch}`);
+
+            if (isMatch) {
+              const listenerId = getListenerId(gateway, listener.name);
+              const listenerExists = nodes.some((n) => n.id === listenerId);
+
+              if (listenerExists) {
+                const edge: EdgeModel = {
+                  id: `${listenerId}_to_${dnsId}`,
+                  type: TYPE_GATEWAY_TO_DNS_RECORD,
+                  source: listenerId,
+                  target: dnsId,
+                  edgeStyle: EdgeStyle.solid,
+                };
+
+                edges.push(edge);
+                edgeCreated = true;
+
+                console.log(
+                  `[GatewayModelBuilder] ✓ Connected DNSRecord ${dnsId} to Listener ${listener.name} (hostname: ${listenerHostname || '*'})`,
+                );
+              } else {
+                console.warn(
+                  `[GatewayModelBuilder] Listener ${listenerId} not found in nodes`,
+                );
+              }
+            }
+          });
+
+          // Fallback: if no listener matched, connect to Gateway
+          if (!edgeCreated) {
+            console.warn(
+              `[GatewayModelBuilder] No listener matched for DNSRecord ${dnsId}, falling back to Gateway connection`,
+            );
+
+            const gwId = getGatewayId(gateway);
+            const gwExists = nodes.some((n) => n.id === gwId);
+
+            if (gwExists) {
+              const edge: EdgeModel = {
+                id: `${gwId}_to_${dnsId}`,
+                type: TYPE_GATEWAY_TO_DNS_RECORD,
+                source: gwId,
+                target: dnsId,
+                edgeStyle: EdgeStyle.dashed, // Dashed to indicate fallback
+              };
+
+              edges.push(edge);
+
+              console.log(
+                `[GatewayModelBuilder] Connected DNSRecord ${dnsId} to Gateway ${gatewayName} (fallback - no listener hostname match)`,
+              );
+            } else {
+              console.warn(
+                `[GatewayModelBuilder] Gateway not found: ${gwId} for DNSRecord ${dnsId}`,
+              );
+            }
+          }
+        } else {
+          console.warn(
+            `[GatewayModelBuilder] Gateway ${gatewayName} has no listeners for DNSRecord ${dnsId}`,
+          );
+        }
       }
     });
   }
